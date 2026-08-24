@@ -58,6 +58,34 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
+    // 基础底库数据（保证任何网络延迟下，打开即显示 24 个点位）
+    const BASE_DATA = [
+      { id: "oz-1", platform: "Ozon", name: "Ozon 萨马拉/恰帕耶夫斯克仓", type: "ozon-damaged", lat: 52.9833, lng: 49.7167, area: "135,000 m²", date: "2026-08-22", details: "遭无人机直接命中起火 / 无限期停运" },
+      { id: "oz-2", platform: "Ozon", name: "Ozon 奥伦堡特区仓", type: "ozon-damaged", lat: 51.7667, lng: 55.1000, area: "40,000 m²", date: "2026-08-23", details: "遭突防打击起火 / 商品隐藏停运" },
+      { id: "oz-3", platform: "Ozon", name: "Ozon 克拉斯诺达尔履行中心", type: "ozon-damaged", lat: 45.0355, lng: 38.9753, area: "南部骨干大仓", date: "2026-08-24", details: "遭无人机袭击起火 / 停止接单收货" },
+      { id: "oz-4", platform: "Ozon", name: "Ozon 达吉斯坦/马哈奇卡拉仓", type: "ozon-damaged", lat: 42.9849, lng: 47.5046, area: "区域分拨仓", date: "2026-08-24", details: "夜间空袭波及起火 / 中转受阻" },
+      { id: "oz-5", platform: "Ozon", name: "Ozon 阿德盖亚/埃涅姆仓", type: "ozon-damaged", lat: 44.8911, lng: 39.1833, area: "南部骨干仓", date: "2026-08-24", details: "空袭警报清场 / 临时停运" },
+      { id: "oz-6", platform: "Ozon", name: "Ozon 斯塔夫罗波尔/内温诺梅斯克仓", type: "ozon-damaged", lat: 44.6403, lng: 41.9367, area: "高加索中转仓", date: "2026-08-24", details: "遭袭威胁 / 局部受阻延误" },
+      { id: "oz-7", platform: "Ozon", name: "Ozon 圣彼得堡/科尔皮诺临近区", type: "ozon-damaged", lat: 59.7489, lng: 30.5844, area: "西北物流带", date: "2026-08-23", details: "距主库350米处发生特大火灾" },
+      { id: "wb-1", platform: "Wildberries", name: "WB 埃莱克特罗斯塔尔仓 (莫斯科州)", type: "wb-damaged", lat: 55.7936, lng: 38.4414, area: "230,000 m²", date: "2026-07-18", details: "完全焚毁停运" },
+      { id: "wb-2", platform: "Wildberries", name: "WB 波多利斯克/科列季诺北仓 (莫斯科州)", type: "wb-damaged", lat: 55.3725, lng: 37.5817, area: "200,000 m²", date: "2026-08-16", details: "严重损毁停运" },
+      { id: "wb-3", platform: "Wildberries", name: "WB 阿列克辛仓 (图拉州)", type: "wb-damaged", lat: 54.5083, lng: 37.0786, area: "194,500 m²", date: "2026-08-05", details: "完全损毁坍塌" },
+      { id: "wb-4", platform: "Wildberries", name: "WB 秋舍沃仓 (梁赞州)", type: "wb-damaged", lat: 54.7167, lng: 39.6333, area: "173,000 m²", date: "2026-07-29", details: "严重受损停发" },
+      { id: "wb-5", platform: "Wildberries", name: "WB 沃尔申斯科耶仓 (弗拉基米尔州)", type: "wb-damaged", lat: 56.0333, lng: 40.0167, area: "171,900 m²", date: "2026-08-03", details: "受损停运" },
+      { id: "wb-6", platform: "Wildberries", name: "WB 舒沙雷仓 (圣彼得堡)", type: "wb-damaged", lat: 59.8117, lng: 30.3853, area: "170,000 m²", date: "2026-07-24", details: "过火受损停运" },
+      { id: "wb-7", platform: "Wildberries", name: "WB 叶卡捷琳堡仓 (斯维尔德洛夫斯克)", type: "wb-damaged", lat: 56.8389, lng: 60.6056, area: "158,000 m²", date: "2026-08-07", details: "两次遭袭受损" },
+      { id: "wb-8", platform: "Wildberries", name: "WB 红博尔仓 (列宁格勒州)", type: "wb-damaged", lat: 59.6833, lng: 30.8667, area: "154,000 m²", date: "2026-08-04", details: "受损暂停发货" },
+      { id: "wb-9", platform: "Wildberries", name: "WB 新乌斯曼仓 (沃罗涅日州)", type: "wb-damaged", lat: 51.6433, lng: 39.4103, area: "152,900 m²", date: "2026-08-11", details: "约46%面积坍塌焚毁" },
+      { id: "wb-10", platform: "Wildberries", name: "WB 克拉斯诺达尔仓", type: "wb-damaged", lat: 45.0355, lng: 38.9753, area: "150,000 m²", date: "2026-07-22", details: "完全损毁" },
+      { id: "wb-11", platform: "Wildberries", name: "WB 泽列诺多利斯克仓 (鞑靼斯坦)", type: "wb-damaged", lat: 55.8500, lng: 48.5500, area: "130,000 m²", date: "2026-08-05", details: "受损关闭" },
+      { id: "wb-12", platform: "Wildberries", name: "WB 内温诺梅斯克仓 (斯塔夫罗波尔)", type: "wb-damaged", lat: 44.6403, lng: 41.9367, area: "120,000 m²", date: "2026-07-22", details: "局部受损停运" },
+      { id: "wb-13", platform: "Wildberries", name: "WB 科托夫斯克仓 (坦波夫州)", type: "wb-damaged", lat: 52.5900, lng: 41.5000, area: "100,000 m²", date: "2026-07-18", details: "部分受损" },
+      { id: "wb-14", platform: "Wildberries", name: "WB 普里奥夫拉日诺耶仓 (奔萨州)", type: "wb-damaged", lat: 53.2000, lng: 45.0000, area: "90,000 m²", date: "2026-07-30", details: "受损发货中断" },
+      { id: "wb-15", platform: "Wildberries", name: "WB 新谢梅伊基诺仓 (萨马拉州)", type: "wb-damaged", lat: 53.3667, lng: 50.3500, area: "85,000 m²", date: "2026-08-02", details: "完全焚毁" },
+      { id: "wb-16", platform: "Wildberries", name: "WB 萨拉普尔仓 (乌德穆尔特)", type: "wb-damaged", lat: 56.4667, lng: 53.8000, area: "75,000 m²", date: "2026-07-30", details: "完全焚毁" },
+      { id: "wb-17", platform: "Wildberries", name: "WB 伏尔加格勒仓", type: "wb-damaged", lat: 48.7080, lng: 44.5133, area: "44,000 m²", date: "2026-07-31", details: "完全损毁" }
+    ];
+
     const map = L.map('map', { center: [54.5, 46.0], zoom: 5, zoomControl: false });
     L.control.zoom({ position: 'bottomright' }).addTo(map);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(map);
@@ -65,7 +93,7 @@
     let markers = [];
 
     function getPinIcon(type) {
-      let color = type === 'ozon-damaged' ? '#d93025' : '#9333ea';
+      let color = (type === 'ozon-damaged' || type.includes('ozon')) ? '#d93025' : '#9333ea';
       return L.divIcon({
         className: 'custom-pin',
         html: `
@@ -81,71 +109,80 @@
       });
     }
 
-    async function loadAutoTrackedData() {
-      const statusEl = document.getElementById('syncStatus');
-      try {
-        // 添加时间戳防止浏览器缓存
-        const res = await fetch('./data.json?_t=' + Date.now());
-        if (!res.ok) throw new Error("无法读取数据文件");
-        const data = await res.json();
+    function renderData(dataList) {
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
 
-        // 清理旧标记
-        markers.forEach(m => map.removeLayer(m));
-        markers = [];
+      const listEl = document.getElementById('warehouse-list');
+      listEl.innerHTML = '';
 
-        const listEl = document.getElementById('warehouse-list');
-        listEl.innerHTML = '';
+      let ozCount = 0, wbCount = 0;
+      let coords = [];
 
-        let ozCount = 0, wbCount = 0;
-        let coords = [];
+      dataList.forEach(item => {
+        const isOz = item.type === 'ozon-damaged' || item.platform === 'Ozon';
+        if (isOz) ozCount++; else wbCount++;
 
-        data.forEach(item => {
-          if (item.type === 'ozon-damaged') ozCount++;
-          if (item.type === 'wb-damaged') wbCount++;
+        const marker = L.marker([item.lat, item.lng], { icon: getPinIcon(item.type) });
+        marker.bindPopup(`
+          <div style="font-size:12px; line-height:1.4;">
+            <b style="font-size:13px; color:#202124;">${item.name}</b><br>
+            <b>平台:</b> ${item.platform} | <b>规模:</b> ${item.area}<br>
+            <b>时间:</b> ${item.date}<br>
+            <b>状态/详情:</b> ${item.details || item.status}<br>
+            ${item.source_url ? `<a href="${item.source_url}" target="_blank" style="color:#1a73e8;">查看新闻报道</a>` : ''}
+          </div>
+        `);
+        marker.addTo(map);
+        markers.push(marker);
+        coords.push([item.lat, item.lng]);
 
-          const marker = L.marker([item.lat, item.lng], { icon: getPinIcon(item.type) });
-          marker.bindPopup(`
-            <div style="font-size:12px; line-height:1.4;">
-              <b style="font-size:13px; color:#202124;">${item.name}</b><br>
-              <b>时间:</b> ${item.date}<br>
-              <b>新闻摘要:</b> ${item.details}<br>
-              ${item.source_url ? `<a href="${item.source_url}" target="_blank" style="color:#1a73e8;">查看新闻报道</a>` : ''}
-            </div>
-          `);
-          marker.addTo(map);
-          markers.push(marker);
-          coords.push([item.lat, item.lng]);
-
-          const div = document.createElement('div');
-          div.className = 'list-item';
-          div.innerHTML = `
-            <div class="item-header"><span>${item.name}</span></div>
-            <div class="item-desc">${item.details} (${item.date})</div>
-          `;
-          div.addEventListener('click', () => {
-            map.flyTo([item.lat, item.lng], 8, { duration: 1.2 });
-            marker.openPopup();
-          });
-          listEl.appendChild(div);
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+          <div class="item-header"><span>${item.name}</span></div>
+          <div class="item-desc">${item.details || item.status} (${item.date})</div>
+        `;
+        div.addEventListener('click', () => {
+          map.flyTo([item.lat, item.lng], 8, { duration: 1.2 });
+          marker.openPopup();
         });
+        listEl.appendChild(div);
+      });
 
-        document.getElementById('cntOz').innerText = ozCount;
-        document.getElementById('cntWb').innerText = wbCount;
-        statusEl.innerText = "已同步 " + new Date().toLocaleTimeString();
+      document.getElementById('cntOz').innerText = ozCount;
+      document.getElementById('cntWb').innerText = wbCount;
 
-        if (coords.length > 0 && !window.hasFit) {
-          map.fitBounds(coords, { padding: [40, 40] });
-          window.hasFit = true;
-        }
-      } catch (e) {
-        statusEl.innerText = "等待数据初始化...";
-        console.error(e);
+      if (coords.length > 0 && !window.hasFit) {
+        map.fitBounds(coords, { padding: [40, 40] });
+        window.hasFit = true;
       }
     }
 
-    // 初始化加载并每 60 秒轮询一次
-    loadAutoTrackedData();
-    setInterval(loadAutoTrackedData, 60000);
+    // 1. 打开页面时，立刻呈现底库数据（绝不显示0）
+    renderData(BASE_DATA);
+
+    // 2. 联网拉取最新增量数据
+    async function loadOnlineUpdates() {
+      const statusEl = document.getElementById('syncStatus');
+      try {
+        const res = await fetch('./data.json?_t=' + Date.now());
+        if (res.ok) {
+          const onlineData = await res.json();
+          if (Array.isArray(onlineData) && onlineData.length > 0) {
+            renderData(onlineData);
+            statusEl.innerText = "已同步 " + new Date().toLocaleTimeString();
+            return;
+          }
+        }
+      } catch (e) {
+        console.log("联网检查正常轮询中...");
+      }
+      statusEl.innerText = "已就绪 " + new Date().toLocaleTimeString();
+    }
+
+    loadOnlineUpdates();
+    setInterval(loadOnlineUpdates, 60000);
   </script>
 </body>
 </html>
