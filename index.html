@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>俄电商仓网与态势监控系统</title>
-  <!-- Leaflet 地图核心样式与脚本 -->
+  <title>俄电商仓网与遭袭态势监控系统</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -13,7 +12,7 @@
 
     #app-container { display: flex; height: 100vh; width: 100vw; position: relative; }
 
-    /* 左侧控制与列表面板 */
+    /* 左侧面板 */
     #sidebar {
       width: 440px;
       height: 100%;
@@ -63,12 +62,13 @@
       padding: 4px 10px; border-radius: 16px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px;
     }
     .tag-btn:hover { background: #f1f5f9; }
-    .tag-btn.active { background: #dc2626; color: #fff; border-color: #dc2626; font-weight: 600; }
-    .tag-btn.active.tag-wb { background: #8b5cf6; border-color: #8b5cf6; }
-    .tag-btn.active.tag-normal { background: #2563eb; border-color: #2563eb; }
-    .tag-btn.active.tag-all { background: #1e293b; border-color: #1e293b; }
+    .tag-btn.active { background: #1e293b; color: #fff; border-color: #1e293b; font-weight: 600; }
+    .tag-btn.active[data-filter="all_attack"] { background: #ea580c; border-color: #ea580c; }
+    .tag-btn.active[data-filter="ozon_attack"] { background: #dc2626; border-color: #dc2626; }
+    .tag-btn.active[data-filter="wb_attack"] { background: #8b5cf6; border-color: #8b5cf6; }
+    .tag-btn.active[data-filter="ozon_normal"] { background: #2563eb; border-color: #2563eb; }
 
-    /* 滚动列表 */
+    /* 列表卡片 */
     .warehouse-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
     .warehouse-card {
       background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;
@@ -87,13 +87,12 @@
     .card-status { font-size: 12px; color: #475569; font-weight: 600; margin-bottom: 4px; }
     .card-desc { font-size: 11.5px; color: #64748b; line-height: 1.5; }
 
-    /* 右侧地图容器 */
+    /* 右侧地图 */
     #map { flex: 1; height: 100%; background: #e5e7eb; }
 
-    /* 自定义 Leaflet Popup */
-    .custom-popup .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); padding: 4px; }
+    .custom-popup .leaflet-popup-content-wrapper { border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); padding: 4px; }
     .custom-popup .leaflet-popup-content { margin: 12px; font-size: 12.5px; line-height: 1.6; color: #334155; }
-    .popup-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    .popup-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
     .popup-row { margin-bottom: 3px; }
     .popup-row strong { color: #1e293b; }
     .popup-coord { display: inline-flex; align-items: center; gap: 4px; color: #2563eb; font-weight: 600; font-size: 11px; margin-top: 6px; }
@@ -102,7 +101,6 @@
 <body>
 
 <div id="app-container">
-  <!-- 左侧控制台 -->
   <aside id="sidebar">
     <div class="header-box">
       <div class="header-title">
@@ -110,7 +108,6 @@
         <span class="live-badge">实时数据</span>
       </div>
 
-      <!-- 统计指标 -->
       <div class="stats-grid">
         <div class="stat-card ozon-attack" onclick="setFilter('ozon_attack')">
           <div class="num" id="stat-ozon-attack">0</div>
@@ -126,235 +123,355 @@
         </div>
       </div>
 
-      <!-- 搜索栏 -->
       <div class="search-box">
         <span class="search-icon">🔍</span>
         <input type="text" id="searchInput" placeholder="搜索仓库名、城市或集群..." oninput="handleSearch()" />
       </div>
 
-      <!-- 过滤标签 -->
       <div class="filter-tags">
-        <button class="tag-btn tag-all active" onclick="setFilter('all')">全部显示</button>
-        <button class="tag-btn tag-attack" onclick="setFilter('all_attack')">● 全部遭袭仓</button>
-        <button class="tag-btn" onclick="setFilter('ozon_attack')">● Ozon 遭袭</button>
-        <button class="tag-btn tag-wb" onclick="setFilter('wb_attack')">● WB 遭袭</button>
-        <button class="tag-btn tag-normal" onclick="setFilter('ozon_normal')">● Ozon 正常</button>
+        <button class="tag-btn active" data-filter="all" onclick="setFilter('all')">全部显示</button>
+        <button class="tag-btn" data-filter="all_attack" onclick="setFilter('all_attack')">● 全部遭袭仓</button>
+        <button class="tag-btn" data-filter="ozon_attack" onclick="setFilter('ozon_attack')">● Ozon 遭袭</button>
+        <button class="tag-btn" data-filter="wb_attack" onclick="setFilter('wb_attack')">● WB 遭袭</button>
+        <button class="tag-btn" data-filter="ozon_normal" onclick="setFilter('ozon_normal')">● Ozon 正常</button>
       </div>
     </div>
 
-    <!-- 仓库列表 -->
     <div class="warehouse-list" id="warehouseList"></div>
   </aside>
 
-  <!-- 右侧地图 -->
   <main id="map"></main>
 </div>
 
 <script>
-  // 1. 全俄 Ozon / WB 仓网与事件数据集 (覆盖莫斯科、圣彼得堡、南部、伏尔加河、乌拉尔、西伯利亚等集群)
+  // =========================================================================
+  // 全量真实仓库数据集 (7 处 Ozon遭袭 + 17 处 WB遭袭 + 24 处 Ozon正常运营仓)
+  // =========================================================================
   const warehouseData = [
+    // ----------------- 【一、 Ozon 遭袭/受损仓库 (7 处)】 -----------------
     {
-      id: "ozon_krasnodar",
-      name: "Ozon 克拉斯诺达尔履行中心",
-      platform: "Ozon",
-      type: "ozon_attack",
+      id: "oz_d_1", platform: "Ozon", type: "ozon_attack",
+      name: "Ozon 萨马拉/恰帕耶夫斯克仓", date: "2026-08-22", scale: "135,000 m²",
+      status: "遭无人机直接命中起火 / 无限期停运",
+      desc: "伏尔加河流域核心枢纽，500余人紧急撤离，干线全面中断。",
+      coords: [52.9833, 49.7167]
+    },
+    {
+      id: "oz_d_2", platform: "Ozon", type: "ozon_attack",
+      name: "Ozon 奥伦堡特区仓", date: "2026-08-23", scale: "40,000 m²",
+      status: "遭突防打击起火 / 商品隐藏停运",
+      desc: "经济特区核心中转仓，存货全网隐藏，订单分流至乌法仓。",
+      coords: [51.7667, 55.1000]
+    },
+    {
+      id: "oz_d_3", platform: "Ozon", type: "ozon_attack",
+      name: "Ozon 克拉斯诺达尔履行中心", date: "2026-08-24", scale: "南部骨干仓",
       status: "遭无人机袭击起火 / 停止接单收货",
-      date: "2026-08-24",
-      scale: "南部骨干仓",
-      desc: "俄南部出口海口及黑海辐射中枢受重创，在途干线重路由。",
+      desc: "俄南部出海口及黑海辐射中枢受重创，在途干线重路由。",
       coords: [45.0355, 38.9753]
     },
     {
-      id: "ozon_dagestan",
-      name: "Ozon 达吉斯坦/马哈奇卡拉仓",
-      platform: "Ozon",
-      type: "ozon_attack",
+      id: "oz_d_4", platform: "Ozon", type: "ozon_attack",
+      name: "Ozon 达吉斯坦/马哈奇卡拉仓", date: "2026-08-24", scale: "里海区域分拨仓",
       status: "夜间空袭波及起火 / 中转受阻",
-      date: "2026-08-24",
-      scale: "高加索区域仓",
-      desc: "里海沿岸物流网点作业受阻，周边派送出现 48 小时延误。",
-      coords: [42.9849, 47.5047]
+      desc: "里海沿岸物流网点作业受阻，周边派送严重延误。",
+      coords: [42.9849, 47.5046]
     },
     {
-      id: "ozon_adygea",
-      name: "Ozon 阿德盖亚/埃涅姆仓",
-      platform: "Ozon",
-      type: "ozon_attack",
+      id: "oz_d_5", platform: "Ozon", type: "ozon_attack",
+      name: "Ozon 阿德盖亚/埃涅姆仓", date: "2026-08-24", scale: "南部骨干仓",
       status: "空袭警报清场 / 临时停运",
-      date: "2026-08-24",
-      scale: "南部中转分拨中心",
-      desc: "夜间遭遇无人集群突防威胁，全员疏散作业中断。",
-      coords: [44.9288, 38.9056]
+      desc: "夜间遭遇无人机集群突防威胁，全员疏散作业中断。",
+      coords: [44.8911, 39.1833]
     },
     {
-      id: "ozon_stavropol",
-      name: "Ozon 斯塔夫罗波尔/内温诺梅斯克仓",
-      platform: "Ozon",
-      type: "ozon_attack",
+      id: "oz_d_6", platform: "Ozon", type: "ozon_attack",
+      name: "Ozon 斯塔夫罗波尔/内温诺梅斯克仓", date: "2026-08-24", scale: "高加索中转仓",
       status: "遭袭威胁 / 局部受阻延误",
-      date: "2026-08-24",
-      scale: "北高加索骨干仓",
       desc: "高加索进出港班次严重滞后。",
-      coords: [44.6333, 41.9333]
+      coords: [44.6403, 41.9367]
     },
     {
-      id: "ozon_spb_kolpino",
-      name: "Ozon 圣彼得堡/科尔皮诺临近区",
-      platform: "Ozon",
-      type: "ozon_attack",
+      id: "oz_d_7", platform: "Ozon", type: "ozon_attack",
+      name: "Ozon 圣彼得堡/科尔皮诺临近区", date: "2026-08-23", scale: "西北物流带",
       status: "350米外特大火灾 / 干线拥堵",
-      date: "2026-08-23",
-      scale: "西北核心履约中心",
       desc: "距主库仅350米处8.2万平米物流园发生4级大火，出入城干线受阻。",
-      coords: [59.7444, 30.5928]
+      coords: [59.7489, 30.5844]
+    },
+
+    // ----------------- 【二、 Wildberries (WB) 全部遭袭仓库 (17 处)】 -----------------
+    {
+      id: "wb_d_1", platform: "Wildberries", type: "wb_attack",
+      name: "WB 埃莱克特罗斯塔尔仓 (莫斯科州)", date: "2026-07-18", scale: "230,000 m²",
+      status: "完全焚毁停运", desc: "俄境内最大枢纽之一，遭无人机摧毁。",
+      coords: [55.7936, 38.4414]
     },
     {
-      id: "wb_shushary",
-      name: "WB 圣彼得堡/舒沙里超级仓",
-      platform: "WB",
-      type: "wb_attack",
-      status: "仓库受损 / 分流限制入库",
-      date: "2026-08-22",
-      scale: "西北旗舰中枢",
-      desc: "受火灾与防空波及，周边区域交通管制，暂停大件接收。",
-      coords: [59.8055, 30.3808]
+      id: "wb_d_2", platform: "Wildberries", type: "wb_attack",
+      name: "WB 波多利斯克/科列季诺北仓 (莫斯科州)", date: "2026-08-16", scale: "200,000 m²",
+      status: "严重损毁停运", desc: "莫斯科南部主力特大仓遭轰炸起火。",
+      coords: [55.3725, 37.5817]
     },
     {
-      id: "wb_koledino",
-      name: "WB 莫斯科/科列季诺 (Koledino)",
-      platform: "WB",
-      type: "wb_attack",
-      status: "预警疏散 / 产能降级 30%",
-      date: "2026-08-24",
-      scale: "全俄第一大总仓",
-      desc: "受莫斯科空域管制联动影响，夜间分拣吞吐量阶段性受限。",
-      coords: [55.3725, 37.5684]
-    },
-    // Ozon 正常运营的全俄主要骨干大仓
-    {
-      id: "ozon_new_riga",
-      name: "Ozon 莫斯科/新里加 (Novaya Riga)",
-      platform: "Ozon",
-      type: "ozon_normal",
-      status: "正常运营 / 满负荷运转",
-      date: "2026-08-24",
-      scale: "全俄核心特级履约中心",
-      desc: "承担莫斯科及环线主要履约出库，自动化分拣设备运转正常。",
-      coords: [55.8016, 36.8744]
+      id: "wb_d_3", platform: "Wildberries", type: "wb_attack",
+      name: "WB 阿列克辛仓 (图拉州)", date: "2026-08-05", scale: "194,500 m²",
+      status: "完全损毁坍塌", desc: "多架无人机直接命中引发特大火灾。",
+      coords: [54.5083, 37.0786]
     },
     {
-      id: "ozon_khorugvino",
-      name: "Ozon 莫斯科/霍鲁格维诺 (Khorugvino)",
-      platform: "Ozon",
-      type: "ozon_normal",
-      status: "正常运营 / 全力承接分流",
-      date: "2026-08-24",
-      scale: "北部超大履约中心",
-      desc: "作为核心北向中枢，已承接南部受阻订单的转仓发货。",
-      coords: [56.1287, 37.1652]
+      id: "wb_d_4", platform: "Wildberries", type: "wb_attack",
+      name: "WB 秋舍沃仓 (梁赞州)", date: "2026-07-29", scale: "173,000 m²",
+      status: "严重受损停发", desc: "仓储结构严重受损，履约中断。",
+      coords: [54.7167, 39.6333]
     },
     {
-      id: "ozon_sofyino",
-      name: "Ozon 莫斯科/索菲诺 (Sofyino)",
-      platform: "Ozon",
-      type: "ozon_normal",
-      status: "正常运营",
-      date: "2026-08-24",
-      scale: "东南部跨区域集散中心",
-      desc: "跨境头程与陆运中转主枢纽，收发货通道顺畅。",
-      coords: [55.5186, 38.1633]
+      id: "wb_d_5", platform: "Wildberries", type: "wb_attack",
+      name: "WB 沃尔申斯科耶仓 (弗拉基米尔州)", date: "2026-08-03", scale: "171,900 m²",
+      status: "受损停运", desc: "莫斯科东部辐射通道受阻。",
+      coords: [56.0333, 40.0167]
     },
     {
-      id: "ozon_kazan",
-      name: "Ozon 喀山/泽列诺多尔斯克仓",
-      platform: "Ozon",
-      type: "ozon_normal",
-      status: "正常运营",
-      date: "2026-08-24",
-      scale: "伏尔加联邦区中枢仓",
-      desc: "连接欧亚板块重要物流节点，辐射鞑靼斯坦及乌拉尔西翼。",
-      coords: [55.8450, 48.5564]
+      id: "wb_d_6", platform: "Wildberries", type: "wb_attack",
+      name: "WB 舒沙雷仓 (圣彼得堡)", date: "2026-07-24", scale: "170,000 m²",
+      status: "过火受损停运", desc: "西北联邦区核心中枢瘫痪。",
+      coords: [59.8117, 30.3853]
     },
     {
-      id: "ozon_ekb",
-      name: "Ozon 叶卡捷琳堡履约中心",
-      platform: "Ozon",
-      type: "ozon_normal",
-      status: "正常运营",
-      date: "2026-08-24",
-      scale: "乌拉尔核心中枢",
-      desc: "西伯利亚与欧洲区陆运重要中继仓，收货正常。",
-      coords: [56.7766, 60.7818]
+      id: "wb_d_7", platform: "Wildberries", type: "wb_attack",
+      name: "WB 叶卡捷琳堡仓 (斯维尔德洛夫斯克)", date: "2026-08-07", scale: "158,000 m²",
+      status: "两次遭袭受损", desc: "乌拉尔中枢两度遭遇突防打击。",
+      coords: [56.8389, 60.6056]
     },
     {
-      id: "ozon_nsk",
-      name: "Ozon 新西伯利亚履约中心",
-      platform: "Ozon",
-      type: "ozon_normal",
-      status: "正常运营",
-      date: "2026-08-24",
-      scale: "西西伯利亚特大仓",
-      desc: "全俄东向干线骨干仓，运转一切正常。",
-      coords: [55.0084, 82.9357]
+      id: "wb_d_8", platform: "Wildberries", type: "wb_attack",
+      name: "WB 红博尔仓 (列宁格勒州)", date: "2026-08-04", scale: "154,000 m²",
+      status: "受损暂停发货", desc: "圣彼得堡南部门户仓受创。",
+      coords: [59.6833, 30.8667]
     },
     {
-      id: "ozon_samara",
-      name: "Ozon 萨马拉/恰帕耶夫斯克仓",
-      platform: "Ozon",
-      type: "ozon_normal",
-      status: "正常运营",
-      date: "2026-08-24",
-      scale: "伏尔加河南部中枢",
-      desc: "主要辐射萨马拉州、萨拉托夫州及哈萨克斯坦边境路线。",
-      coords: [52.9818, 49.7186]
+      id: "wb_d_9", platform: "Wildberries", type: "wb_attack",
+      name: "WB 新乌斯曼仓 (沃罗涅日州)", date: "2026-08-11", scale: "152,900 m²",
+      status: "约46%面积坍塌焚毁", desc: "7万平米库房过火坍塌。",
+      coords: [51.6433, 39.4103]
     },
     {
-      id: "ozon_nn",
-      name: "Ozon 下诺夫哥罗德仓",
-      platform: "Ozon",
-      type: "ozon_normal",
-      status: "正常运营",
-      date: "2026-08-24",
-      scale: "中部大区仓",
-      desc: "承接莫斯科东扩干线中转，运转高效。",
-      coords: [56.2965, 43.9361]
+      id: "wb_d_10", platform: "Wildberries", type: "wb_attack",
+      name: "WB 克拉斯诺达尔仓", date: "2026-07-22", scale: "150,000 m²",
+      status: "完全损毁", desc: "南部核心枢纽完全丧失履约能力。",
+      coords: [45.0355, 38.9753]
     },
     {
-      id: "ozon_rostov",
-      name: "Ozon 罗斯托夫/格鲁舍夫斯卡亚",
-      platform: "Ozon",
-      type: "ozon_attack",
-      status: "防空管制 / 进出港延迟 24h+",
-      date: "2026-08-24",
-      scale: "南部主枢纽",
-      desc: "受顿河畔罗斯托夫空域限制影响，目前优先消化场内库存。",
-      coords: [47.4633, 39.9572]
+      id: "wb_d_11", platform: "Wildberries", type: "wb_attack",
+      name: "WB 泽列诺多利斯克仓 (鞑靼斯坦)", date: "2026-08-05", scale: "130,000 m²",
+      status: "受损关闭", desc: "喀山枢纽走廊受阻。",
+      coords: [55.8500, 48.5500]
+    },
+    {
+      id: "wb_d_12", platform: "Wildberries", type: "wb_attack",
+      name: "WB 内温诺梅斯克仓 (斯塔夫罗波尔)", date: "2026-07-22", scale: "120,000 m²",
+      status: "局部受损停运", desc: "高加索通道受创。",
+      coords: [44.6403, 41.9367]
+    },
+    {
+      id: "wb_d_13", platform: "Wildberries", type: "wb_attack",
+      name: "WB 科托夫斯克仓 (坦波夫州)", date: "2026-07-18", scale: "100,000 m²",
+      status: "部分受损", desc: "黑土区物流中继受阻。",
+      coords: [52.5900, 41.5000]
+    },
+    {
+      id: "wb_d_14", platform: "Wildberries", type: "wb_attack",
+      name: "WB 普里奥夫拉日诺耶仓 (奔萨州)", date: "2026-07-30", scale: "90,000 m²",
+      status: "受损发货中断", desc: "伏尔加河西岸分拨点受创。",
+      coords: [53.2000, 45.0000]
+    },
+    {
+      id: "wb_d_15", platform: "Wildberries", type: "wb_attack",
+      name: "WB 新谢梅伊基诺仓 (萨马拉州)", date: "2026-08-02", scale: "85,000 m²",
+      status: "完全焚毁", desc: "萨马拉干线特大火灾。",
+      coords: [53.3667, 50.3500]
+    },
+    {
+      id: "wb_d_16", platform: "Wildberries", type: "wb_attack",
+      name: "WB 萨拉普尔仓 (乌德穆尔特)", date: "2026-07-30", scale: "75,000 m²",
+      status: "完全焚毁", desc: "乌拉尔西部枢纽焚毁。",
+      coords: [56.4667, 53.8000]
+    },
+    {
+      id: "wb_d_17", platform: "Wildberries", type: "wb_attack",
+      name: "WB 伏尔加格勒仓", date: "2026-07-31", scale: "44,000 m²",
+      status: "完全损毁", desc: "伏尔加河南段干线枢纽中断。",
+      coords: [48.7080, 44.5133]
+    },
+
+    // ----------------- 【三、 Ozon 正常运营骨干履行中心 (24 处)】 -----------------
+    {
+      id: "oz_a_1", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 霍鲁格维诺仓 (Хоругвино РФЦ)", date: "正常", scale: "莫斯科西北中枢",
+      status: "正常运营", desc: "全俄核心超大型物流中枢。",
+      coords: [56.0968, 37.1723]
+    },
+    {
+      id: "oz_a_2", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 索菲伊诺仓 (Софьино РФЦ)", date: "正常", scale: "莫斯科东南中枢",
+      status: "正常运营", desc: "辐射东南部干线核心。",
+      coords: [55.4965, 38.1631]
+    },
+    {
+      id: "oz_a_3", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 彼得罗夫斯科耶仓 (Петровское РФЦ)", date: "正常", scale: "莫斯科西部",
+      status: "正常运营", desc: "伊斯特拉工业带大型综合仓。",
+      coords: [55.8278, 36.8625]
+    },
+    {
+      id: "oz_a_4", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 诺金斯克/奥布霍沃仓 (Ногинск РФЦ)", date: "正常", scale: "莫斯科东部",
+      status: "正常运营", desc: "奥布霍沃现代仓储园。",
+      coords: [55.8305, 38.2750]
+    },
+    {
+      id: "oz_a_5", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 普希金诺 1/2 号仓 (Пушкино РФЦ)", date: "正常", scale: "莫斯科北部",
+      status: "正常运营", desc: "雅罗斯拉夫尔方向核心出货仓。",
+      coords: [55.9982, 37.8931]
+    },
+    {
+      id: "oz_a_6", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 格里夫诺/波多利斯克仓 (Гривно РФЦ)", date: "正常", scale: "莫斯科南部",
+      status: "正常运营", desc: "南部干线重要履行中心。",
+      coords: [55.3611, 37.5342]
+    },
+    {
+      id: "oz_a_7", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 特维尔枢纽中心 (Тверь Хаб)", date: "正常", scale: "特维尔州",
+      status: "正常运营", desc: "连接莫斯科与圣彼得堡的走廊枢纽。",
+      coords: [56.7869, 36.0022]
+    },
+    {
+      id: "oz_a_8", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 雅罗斯拉夫尔仓 (Ярославль РФЦ)", date: "正常", scale: "金环大区",
+      status: "正常运营", desc: "辐射俄罗斯北部与金环城市。",
+      coords: [57.5458, 39.8142]
+    },
+    {
+      id: "oz_a_9", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 圣彼得堡/舒沙雷仓 (СПБ Шушары РФЦ)", date: "正常", scale: "西北联邦区",
+      status: "正常运营", desc: "圣彼得堡主要出入港骨干枢纽。",
+      coords: [59.7950, 30.4180]
+    },
+    {
+      id: "oz_a_10", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 圣彼得堡/布格雷仓 (СПБ Бугры РФЦ)", date: "正常", scale: "圣彼得堡北部",
+      status: "正常运营", desc: "北部区域履约与派送仓。",
+      coords: [60.0700, 30.4100]
+    },
+    {
+      id: "oz_a_11", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 加里宁格勒仓 (Калининград МРФЦ)", date: "正常", scale: "飞地特区",
+      status: "正常运营", desc: "波罗的海飞地独立履约中心。",
+      coords: [54.7104, 20.4522]
+    },
+    {
+      id: "oz_a_12", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 喀山新仓 (Казань РФЦ Новый)", date: "正常", scale: "伏尔加河中枢",
+      status: "正常运营", desc: "当前伏尔加河最重要的承接分流总枢纽。",
+      coords: [55.8450, 48.5380]
+    },
+    {
+      id: "oz_a_13", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 下诺夫哥罗德仓 (Нижний Новгород РФЦ)", date: "正常", scale: "克斯托沃园区",
+      status: "正常运营", desc: "连接中部与伏尔加河通道。",
+      coords: [56.1467, 44.1750]
+    },
+    {
+      id: "oz_a_14", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 萨马拉/普列奥布拉任卡仓 (Преображенка РФЦ)", date: "正常", scale: "萨马拉州",
+      status: "正常运营", desc: "承接萨马拉遭袭后的分拨备用仓。",
+      coords: [53.1167, 50.1833]
+    },
+    {
+      id: "oz_a_15", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 乌法仓 (Уфа РФЦ)", date: "正常", scale: "巴什科尔托斯坦",
+      status: "正常运营", desc: "紧急接管奥伦堡遭袭后的订单履约。",
+      coords: [54.7388, 55.9721]
+    },
+    {
+      id: "oz_a_16", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 萨拉托夫仓 (Саратов РФЦ)", date: "正常", scale: "伏尔加河南段",
+      status: "正常运营", desc: "伏尔加河干线骨干仓。",
+      coords: [51.5925, 45.9056]
+    },
+    {
+      id: "oz_a_17", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 顿河畔罗斯托夫仓 (Ростов РФЦ)", date: "正常", scale: "南部骨干仓",
+      status: "正常运营", desc: "承接克拉斯诺达尔受损后的紧急分流。",
+      coords: [47.1689, 39.8731]
+    },
+    {
+      id: "oz_a_18", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 叶卡捷琳堡仓 (Екатеринбург РФЦ)", date: "正常", scale: "乌拉尔总枢纽",
+      status: "正常运营", desc: "乌拉尔及西伯利亚西段安全运营中心。",
+      coords: [56.7644, 60.8058]
+    },
+    {
+      id: "oz_a_19", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 新西伯利亚/鄂毕新仓 (Новосибирск РФЦ)", date: "正常", scale: "西伯利亚总枢纽",
+      status: "正常运营", desc: "战略深远腹地仓，未受空袭威胁。",
+      coords: [54.9950, 82.6883]
+    },
+    {
+      id: "oz_a_20", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 鄂木斯克仓 (Омск РФЦ)", date: "正常", scale: "南西伯利亚",
+      status: "正常运营", desc: "连接哈萨克边境方向的大仓。",
+      coords: [54.9667, 73.4000]
+    },
+    {
+      id: "oz_a_21", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 哈巴罗夫斯克 2 号仓 (远东)", date: "正常", scale: "远东总枢纽",
+      status: "正常运营", desc: "远东地区独立运作。",
+      coords: [48.4814, 135.0722]
+    },
+    {
+      id: "oz_a_22", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 明斯克履行中心 (白俄罗斯)", date: "正常", scale: "白俄罗斯",
+      status: "正常运营", desc: "欧亚联盟西大门。",
+      coords: [53.9006, 27.5590]
+    },
+    {
+      id: "oz_a_23", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 阿斯塔纳仓 (哈萨克斯坦)", date: "正常", scale: "哈萨克首都",
+      status: "正常运营", desc: "中亚腹地现代物流中枢。",
+      coords: [51.1694, 71.4491]
+    },
+    {
+      id: "oz_a_24", platform: "Ozon", type: "ozon_normal",
+      name: "Ozon 阿拉木图仓 (哈萨克斯坦)", date: "正常", scale: "中亚南部",
+      status: "正常运营", desc: "对接中欧班列陆路通道。",
+      coords: [43.2220, 76.8512]
     }
   ];
 
   // 2. 初始化地图
-  const map = L.map('map', { zoomControl: false }).setView([55.7558, 45.0], 5);
+  const map = L.map('map', { zoomControl: false }).setView([55.0, 46.0], 5);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-  // 加载轻量级高质感底图
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; CartoDB &copy; OpenStreetMap',
     maxZoom: 18
   }).addTo(map);
 
-  // 3. 标记点图标生成器
+  // 3. 矢量水滴图钉
   function createCustomIcon(color) {
     const svgIcon = `
-      <svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="30" height="40" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M16 0C7.16344 0 0 7.16344 0 16C0 26.5 16 42 16 42C16 42 32 26.5 32 16C32 7.16344 24.8366 0 16 0Z" fill="${color}"/>
-        <circle cx="16" cy="15" r="6" fill="white"/>
+        <circle cx="16" cy="15" r="5.5" fill="white"/>
       </svg>`;
     return L.divIcon({
       html: svgIcon,
       className: 'map-pin',
-      iconSize: [32, 42],
-      iconAnchor: [16, 42],
-      popupAnchor: [0, -38]
+      iconSize: [30, 40],
+      iconAnchor: [15, 40],
+      popupAnchor: [0, -36]
     });
   }
 
@@ -367,7 +484,6 @@
   let markers = {};
   let currentFilter = 'all';
 
-  // 4. 渲染统计数据
   function updateStats() {
     const ozonAttack = warehouseData.filter(d => d.type === 'ozon_attack').length;
     const wbAttack = warehouseData.filter(d => d.type === 'wb_attack').length;
@@ -378,73 +494,61 @@
     document.getElementById('stat-ozon-normal').innerText = ozonNormal;
   }
 
-  // 5. 生成 Popup HTML
   function getPopupContent(item) {
+    const titlePrefix = item.type === 'ozon_normal' ? '正常' : `遭袭 ${item.date}`;
     return `
-      <div class="popup-title">[${item.type === 'ozon_normal' ? '正常' : '遭袭 ' + item.date.slice(5)}] ${item.name}</div>
-      <div class="popup-row"><strong>平台:</strong> ${item.platform}</div>
-      <div class="popup-row"><strong>状态:</strong> <span style="color:${item.type === 'ozon_normal' ? '#2563eb':'#e11d48'};font-weight:600;">${item.status}</span></div>
-      <div class="popup-row"><strong>规模:</strong> ${item.scale}</div>
+      <div class="popup-title">[${titlePrefix}] ${item.name}</div>
+      <div class="popup-row"><strong>平台:</strong> ${item.platform} | <strong>规模:</strong> ${item.scale}</div>
+      <div class="popup-row"><strong>状态:</strong> <span style="color:${item.type === 'ozon_normal' ? '#2563eb':'#e11d48'};font-weight:700;">${item.status}</span></div>
       <div class="popup-row"><strong>日期:</strong> ${item.date}</div>
-      <div class="popup-row" style="margin-top:6px;">${item.desc}</div>
+      <div class="popup-row" style="margin-top:6px;color:#64748b;">${item.desc}</div>
       <div class="popup-coord">📍 ${item.coords[0].toFixed(4)}, ${item.coords[1].toFixed(4)}</div>
     `;
   }
 
-  // 6. 渲染列表与地图标记
   function renderView(items) {
     const listContainer = document.getElementById('warehouseList');
     listContainer.innerHTML = '';
 
-    // 清空现有标记
     Object.values(markers).forEach(m => map.removeLayer(m));
     markers = {};
 
     items.forEach(item => {
-      // 标签样式映射
       let badgeClass = 'badge-ozon-attack';
       let tagLabel = 'Ozon遭袭';
       if (item.type === 'wb_attack') { badgeClass = 'badge-wb-attack'; tagLabel = 'WB遭袭'; }
       if (item.type === 'ozon_normal') { badgeClass = 'badge-ozon-normal'; tagLabel = 'Ozon正常'; }
 
-      // 创建 DOM 列表卡片
+      const titlePrefix = item.type === 'ozon_normal' ? '正常' : `遭袭 ${item.date.slice(5)}`;
+
       const card = document.createElement('div');
       card.className = 'warehouse-card';
       card.id = `card-${item.id}`;
       card.innerHTML = `
         <div class="card-head">
-          <div class="card-title">[${item.type === 'ozon_normal' ? '正常' : '遭袭 ' + item.date.slice(5)}] ${item.name}</div>
+          <div class="card-title">[${titlePrefix}] ${item.name}</div>
           <span class="badge-pill ${badgeClass}">${tagLabel}</span>
         </div>
         <div class="card-status">${item.status} (${item.date})</div>
         <div class="card-desc">${item.desc}</div>
       `;
 
-      card.onclick = () => {
-        focusWarehouse(item);
-      };
+      card.onclick = () => focusWarehouse(item);
       listContainer.appendChild(card);
 
-      // 创建地图 Marker
       const marker = L.marker(item.coords, { icon: icons[item.type] })
         .bindPopup(getPopupContent(item), { className: 'custom-popup', maxWidth: 300 })
         .addTo(map);
 
-      marker.on('click', () => {
-        highlightCard(item.id);
-      });
-
+      marker.on('click', () => highlightCard(item.id));
       markers[item.id] = marker;
     });
   }
 
-  // 联动交互：点击卡片定位地图
   function focusWarehouse(item) {
     map.flyTo(item.coords, 8, { duration: 1 });
     const marker = markers[item.id];
-    if (marker) {
-      marker.openPopup();
-    }
+    if (marker) marker.openPopup();
     highlightCard(item.id);
   }
 
@@ -457,19 +561,16 @@
     }
   }
 
-  // 7. 筛选与搜索机制
   function filterData() {
     const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
     
     return warehouseData.filter(item => {
-      // 类型过滤
       let matchesType = true;
       if (currentFilter === 'ozon_attack') matchesType = item.type === 'ozon_attack';
       else if (currentFilter === 'wb_attack') matchesType = item.type === 'wb_attack';
       else if (currentFilter === 'ozon_normal') matchesType = item.type === 'ozon_normal';
       else if (currentFilter === 'all_attack') matchesType = item.type.includes('attack');
 
-      // 关键词搜索
       let matchesKeyword = true;
       if (keyword) {
         matchesKeyword = item.name.toLowerCase().includes(keyword) ||
@@ -484,10 +585,9 @@
 
   function setFilter(filterType) {
     currentFilter = filterType;
-    document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
-    
-    // 更新按钮激活状态
-    event?.target?.classList?.add('active');
+    document.querySelectorAll('.tag-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-filter') === filterType);
+    });
 
     const filtered = filterData();
     renderView(filtered);
@@ -498,9 +598,13 @@
     renderView(filtered);
   }
 
-  // 初始化加载
+  // 初始化
   updateStats();
   renderView(warehouseData);
+
+  // 视野居中适配
+  const coreCoords = warehouseData.filter(d => d.coords[1] < 90).map(d => d.coords);
+  map.fitBounds(coreCoords, { padding: [40, 40] });
 </script>
 </body>
 </html>
