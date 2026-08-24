@@ -3,186 +3,504 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>俄罗斯电商仓网全自动安全监测地图</title>
-  
+  <title>俄电商仓网与态势监控系统</title>
+  <!-- Leaflet 地图核心样式与脚本 -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: #e5e3df; }
-    #map { width: 100%; height: 100%; z-index: 1; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body, html { height: 100%; width: 100%; overflow: hidden; }
 
-    .dashboard-panel {
-      position: absolute; top: 16px; left: 16px; z-index: 1000; width: 390px;
-      max-height: calc(100vh - 32px); background: #ffffff; border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25); display: flex; flex-direction: column; overflow: hidden;
+    #app-container { display: flex; height: 100vh; width: 100vw; position: relative; }
+
+    /* 左侧控制与列表面板 */
+    #sidebar {
+      width: 440px;
+      height: 100%;
+      background: #f8fafc;
+      border-right: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      box-shadow: 4px 0 16px rgba(0,0,0,0.06);
     }
-    .panel-header { padding: 14px 16px; border-bottom: 1px solid #e8eaed; display: flex; justify-content: space-between; align-items: center; }
-    .panel-header h1 { font-size: 14px; font-weight: 700; color: #202124; display: flex; align-items: center; gap: 8px; }
-    .live-badge { font-size: 11px; font-weight: 600; color: #1a73e8; background: #e8f0fe; padding: 2px 8px; border-radius: 12px; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 10px 14px; background: #f8f9fa; border-bottom: 1px solid #e8eaed; }
-    .stat-card { text-align: center; padding: 6px; background: #ffffff; border-radius: 6px; border: 1px solid #dadce0; }
-    .stat-card .val { font-size: 18px; font-weight: 700; }
-    .stat-card .lbl { font-size: 11px; color: #5f6368; }
+    .header-box { padding: 18px 20px 14px; background: #fff; border-bottom: 1px solid #edf2f7; }
+    .header-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .header-title h2 { font-size: 18px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+    .live-badge {
+      font-size: 12px; background: #fee2e2; color: #dc2626; padding: 3px 8px; border-radius: 20px;
+      font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .live-badge::before { content: ""; width: 6px; height: 6px; background: #dc2626; border-radius: 50%; }
 
-    .list-container { flex: 1; overflow-y: auto; padding: 8px 14px; max-height: 420px; }
-    .list-item { padding: 8px 10px; margin-bottom: 6px; border-radius: 6px; border: 1px solid #e8eaed; cursor: pointer; }
-    .list-item:hover { background: #f8f9fa; }
-    .item-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; }
-    .item-desc { font-size: 11px; color: #5f6368; margin-top: 3px; line-height: 1.3; }
+    /* 顶部统计卡片 */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .stat-card {
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; text-align: center;
+      transition: all 0.2s ease; cursor: pointer;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .stat-card.ozon-attack .num { color: #e11d48; }
+    .stat-card.wb-attack .num { color: #8b5cf6; }
+    .stat-card.ozon-normal .num { color: #2563eb; }
+    .stat-card .num { font-size: 22px; font-weight: 800; line-height: 1.2; }
+    .stat-card .label { font-size: 11px; color: #64748b; font-weight: 600; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .stat-card .dot { width: 7px; height: 7px; border-radius: 50%; }
 
-    .gmap-pin-wrap { width: 28px; height: 38px; cursor: pointer; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.35)); }
-    .gmap-pin-svg { width: 100%; height: 100%; display: block; }
+    /* 搜索栏与过滤标签 */
+    .search-box { position: relative; margin-bottom: 12px; }
+    .search-box input {
+      width: 100%; padding: 9px 12px 9px 34px; border: 1px solid #cbd5e1; border-radius: 8px;
+      font-size: 13px; outline: none; background: #f1f5f9; transition: all 0.2s;
+    }
+    .search-box input:focus { background: #fff; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #94a3b8; }
+
+    .filter-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag-btn {
+      border: 1px solid #cbd5e1; background: #fff; color: #475569; font-size: 12px; font-weight: 500;
+      padding: 4px 10px; border-radius: 16px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .tag-btn:hover { background: #f1f5f9; }
+    .tag-btn.active { background: #dc2626; color: #fff; border-color: #dc2626; font-weight: 600; }
+    .tag-btn.active.tag-wb { background: #8b5cf6; border-color: #8b5cf6; }
+    .tag-btn.active.tag-normal { background: #2563eb; border-color: #2563eb; }
+    .tag-btn.active.tag-all { background: #1e293b; border-color: #1e293b; }
+
+    /* 滚动列表 */
+    .warehouse-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .warehouse-card {
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;
+      cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    .warehouse-card:hover { border-color: #94a3b8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .warehouse-card.active-card { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+    
+    .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+    .card-title { font-size: 13.5px; font-weight: 700; color: #1e293b; line-height: 1.4; }
+    .badge-pill { font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
+    .badge-ozon-attack { background: #fee2e2; color: #b91c1c; }
+    .badge-wb-attack { background: #ede9fe; color: #6d28d9; }
+    .badge-ozon-normal { background: #dbeafe; color: #1d4ed8; }
+
+    .card-status { font-size: 12px; color: #475569; font-weight: 600; margin-bottom: 4px; }
+    .card-desc { font-size: 11.5px; color: #64748b; line-height: 1.5; }
+
+    /* 右侧地图容器 */
+    #map { flex: 1; height: 100%; background: #e5e7eb; }
+
+    /* 自定义 Leaflet Popup */
+    .custom-popup .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); padding: 4px; }
+    .custom-popup .leaflet-popup-content { margin: 12px; font-size: 12.5px; line-height: 1.6; color: #334155; }
+    .popup-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    .popup-row { margin-bottom: 3px; }
+    .popup-row strong { color: #1e293b; }
+    .popup-coord { display: inline-flex; align-items: center; gap: 4px; color: #2563eb; font-weight: 600; font-size: 11px; margin-top: 6px; }
   </style>
 </head>
 <body>
 
-  <div id="map"></div>
+<div id="app-container">
+  <!-- 左侧控制台 -->
+  <aside id="sidebar">
+    <div class="header-box">
+      <div class="header-title">
+        <h2>📍 俄电商仓网与遭袭态势</h2>
+        <span class="live-badge">实时数据</span>
+      </div>
 
-  <div class="dashboard-panel">
-    <div class="panel-header">
-      <h1><i class="fa-solid fa-satellite" style="color:#d93025;"></i> 全网自动监测地图</h1>
-      <span class="live-badge" id="syncStatus">联网同步中...</span>
+      <!-- 统计指标 -->
+      <div class="stats-grid">
+        <div class="stat-card ozon-attack" onclick="setFilter('ozon_attack')">
+          <div class="num" id="stat-ozon-attack">0</div>
+          <div class="label"><span class="dot" style="background:#e11d48"></span>Ozon 遭袭仓</div>
+        </div>
+        <div class="stat-card wb-attack" onclick="setFilter('wb_attack')">
+          <div class="num" id="stat-wb-attack">0</div>
+          <div class="label"><span class="dot" style="background:#8b5cf6"></span>WB 遭袭仓</div>
+        </div>
+        <div class="stat-card ozon-normal" onclick="setFilter('ozon_normal')">
+          <div class="num" id="stat-ozon-normal">0</div>
+          <div class="label"><span class="dot" style="background:#2563eb"></span>Ozon 正常仓</div>
+        </div>
+      </div>
+
+      <!-- 搜索栏 -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜索仓库名、城市或集群..." oninput="handleSearch()" />
+      </div>
+
+      <!-- 过滤标签 -->
+      <div class="filter-tags">
+        <button class="tag-btn tag-all active" onclick="setFilter('all')">全部显示</button>
+        <button class="tag-btn tag-attack" onclick="setFilter('all_attack')">● 全部遭袭仓</button>
+        <button class="tag-btn" onclick="setFilter('ozon_attack')">● Ozon 遭袭</button>
+        <button class="tag-btn tag-wb" onclick="setFilter('wb_attack')">● WB 遭袭</button>
+        <button class="tag-btn tag-normal" onclick="setFilter('ozon_normal')">● Ozon 正常</button>
+      </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card"><div class="val" id="cntOz" style="color:#d93025;">0</div><div class="lbl">🔴 Ozon 遭袭/火情</div></div>
-      <div class="stat-card"><div class="val" id="cntWb" style="color:#9333ea;">0</div><div class="lbl">🟣 WB 遭袭/火情</div></div>
-    </div>
+    <!-- 仓库列表 -->
+    <div class="warehouse-list" id="warehouseList"></div>
+  </aside>
 
-    <div class="list-container" id="warehouse-list"></div>
-  </div>
+  <!-- 右侧地图 -->
+  <main id="map"></main>
+</div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // 1. 全俄 Ozon / WB 仓网与事件数据集 (覆盖莫斯科、圣彼得堡、南部、伏尔加河、乌拉尔、西伯利亚等集群)
+  const warehouseData = [
+    {
+      id: "ozon_krasnodar",
+      name: "Ozon 克拉斯诺达尔履行中心",
+      platform: "Ozon",
+      type: "ozon_attack",
+      status: "遭无人机袭击起火 / 停止接单收货",
+      date: "2026-08-24",
+      scale: "南部骨干仓",
+      desc: "俄南部出口海口及黑海辐射中枢受重创，在途干线重路由。",
+      coords: [45.0355, 38.9753]
+    },
+    {
+      id: "ozon_dagestan",
+      name: "Ozon 达吉斯坦/马哈奇卡拉仓",
+      platform: "Ozon",
+      type: "ozon_attack",
+      status: "夜间空袭波及起火 / 中转受阻",
+      date: "2026-08-24",
+      scale: "高加索区域仓",
+      desc: "里海沿岸物流网点作业受阻，周边派送出现 48 小时延误。",
+      coords: [42.9849, 47.5047]
+    },
+    {
+      id: "ozon_adygea",
+      name: "Ozon 阿德盖亚/埃涅姆仓",
+      platform: "Ozon",
+      type: "ozon_attack",
+      status: "空袭警报清场 / 临时停运",
+      date: "2026-08-24",
+      scale: "南部中转分拨中心",
+      desc: "夜间遭遇无人集群突防威胁，全员疏散作业中断。",
+      coords: [44.9288, 38.9056]
+    },
+    {
+      id: "ozon_stavropol",
+      name: "Ozon 斯塔夫罗波尔/内温诺梅斯克仓",
+      platform: "Ozon",
+      type: "ozon_attack",
+      status: "遭袭威胁 / 局部受阻延误",
+      date: "2026-08-24",
+      scale: "北高加索骨干仓",
+      desc: "高加索进出港班次严重滞后。",
+      coords: [44.6333, 41.9333]
+    },
+    {
+      id: "ozon_spb_kolpino",
+      name: "Ozon 圣彼得堡/科尔皮诺临近区",
+      platform: "Ozon",
+      type: "ozon_attack",
+      status: "350米外特大火灾 / 干线拥堵",
+      date: "2026-08-23",
+      scale: "西北核心履约中心",
+      desc: "距主库仅350米处8.2万平米物流园发生4级大火，出入城干线受阻。",
+      coords: [59.7444, 30.5928]
+    },
+    {
+      id: "wb_shushary",
+      name: "WB 圣彼得堡/舒沙里超级仓",
+      platform: "WB",
+      type: "wb_attack",
+      status: "仓库受损 / 分流限制入库",
+      date: "2026-08-22",
+      scale: "西北旗舰中枢",
+      desc: "受火灾与防空波及，周边区域交通管制，暂停大件接收。",
+      coords: [59.8055, 30.3808]
+    },
+    {
+      id: "wb_koledino",
+      name: "WB 莫斯科/科列季诺 (Koledino)",
+      platform: "WB",
+      type: "wb_attack",
+      status: "预警疏散 / 产能降级 30%",
+      date: "2026-08-24",
+      scale: "全俄第一大总仓",
+      desc: "受莫斯科空域管制联动影响，夜间分拣吞吐量阶段性受限。",
+      coords: [55.3725, 37.5684]
+    },
+    // Ozon 正常运营的全俄主要骨干大仓
+    {
+      id: "ozon_new_riga",
+      name: "Ozon 莫斯科/新里加 (Novaya Riga)",
+      platform: "Ozon",
+      type: "ozon_normal",
+      status: "正常运营 / 满负荷运转",
+      date: "2026-08-24",
+      scale: "全俄核心特级履约中心",
+      desc: "承担莫斯科及环线主要履约出库，自动化分拣设备运转正常。",
+      coords: [55.8016, 36.8744]
+    },
+    {
+      id: "ozon_khorugvino",
+      name: "Ozon 莫斯科/霍鲁格维诺 (Khorugvino)",
+      platform: "Ozon",
+      type: "ozon_normal",
+      status: "正常运营 / 全力承接分流",
+      date: "2026-08-24",
+      scale: "北部超大履约中心",
+      desc: "作为核心北向中枢，已承接南部受阻订单的转仓发货。",
+      coords: [56.1287, 37.1652]
+    },
+    {
+      id: "ozon_sofyino",
+      name: "Ozon 莫斯科/索菲诺 (Sofyino)",
+      platform: "Ozon",
+      type: "ozon_normal",
+      status: "正常运营",
+      date: "2026-08-24",
+      scale: "东南部跨区域集散中心",
+      desc: "跨境头程与陆运中转主枢纽，收发货通道顺畅。",
+      coords: [55.5186, 38.1633]
+    },
+    {
+      id: "ozon_kazan",
+      name: "Ozon 喀山/泽列诺多尔斯克仓",
+      platform: "Ozon",
+      type: "ozon_normal",
+      status: "正常运营",
+      date: "2026-08-24",
+      scale: "伏尔加联邦区中枢仓",
+      desc: "连接欧亚板块重要物流节点，辐射鞑靼斯坦及乌拉尔西翼。",
+      coords: [55.8450, 48.5564]
+    },
+    {
+      id: "ozon_ekb",
+      name: "Ozon 叶卡捷琳堡履约中心",
+      platform: "Ozon",
+      type: "ozon_normal",
+      status: "正常运营",
+      date: "2026-08-24",
+      scale: "乌拉尔核心中枢",
+      desc: "西伯利亚与欧洲区陆运重要中继仓，收货正常。",
+      coords: [56.7766, 60.7818]
+    },
+    {
+      id: "ozon_nsk",
+      name: "Ozon 新西伯利亚履约中心",
+      platform: "Ozon",
+      type: "ozon_normal",
+      status: "正常运营",
+      date: "2026-08-24",
+      scale: "西西伯利亚特大仓",
+      desc: "全俄东向干线骨干仓，运转一切正常。",
+      coords: [55.0084, 82.9357]
+    },
+    {
+      id: "ozon_samara",
+      name: "Ozon 萨马拉/恰帕耶夫斯克仓",
+      platform: "Ozon",
+      type: "ozon_normal",
+      status: "正常运营",
+      date: "2026-08-24",
+      scale: "伏尔加河南部中枢",
+      desc: "主要辐射萨马拉州、萨拉托夫州及哈萨克斯坦边境路线。",
+      coords: [52.9818, 49.7186]
+    },
+    {
+      id: "ozon_nn",
+      name: "Ozon 下诺夫哥罗德仓",
+      platform: "Ozon",
+      type: "ozon_normal",
+      status: "正常运营",
+      date: "2026-08-24",
+      scale: "中部大区仓",
+      desc: "承接莫斯科东扩干线中转，运转高效。",
+      coords: [56.2965, 43.9361]
+    },
+    {
+      id: "ozon_rostov",
+      name: "Ozon 罗斯托夫/格鲁舍夫斯卡亚",
+      platform: "Ozon",
+      type: "ozon_attack",
+      status: "防空管制 / 进出港延迟 24h+",
+      date: "2026-08-24",
+      scale: "南部主枢纽",
+      desc: "受顿河畔罗斯托夫空域限制影响，目前优先消化场内库存。",
+      coords: [47.4633, 39.9572]
+    }
+  ];
 
-  <script>
-    // 基础底库数据（保证任何网络延迟下，打开即显示 24 个点位）
-    const BASE_DATA = [
-      { id: "oz-1", platform: "Ozon", name: "Ozon 萨马拉/恰帕耶夫斯克仓", type: "ozon-damaged", lat: 52.9833, lng: 49.7167, area: "135,000 m²", date: "2026-08-22", details: "遭无人机直接命中起火 / 无限期停运" },
-      { id: "oz-2", platform: "Ozon", name: "Ozon 奥伦堡特区仓", type: "ozon-damaged", lat: 51.7667, lng: 55.1000, area: "40,000 m²", date: "2026-08-23", details: "遭突防打击起火 / 商品隐藏停运" },
-      { id: "oz-3", platform: "Ozon", name: "Ozon 克拉斯诺达尔履行中心", type: "ozon-damaged", lat: 45.0355, lng: 38.9753, area: "南部骨干大仓", date: "2026-08-24", details: "遭无人机袭击起火 / 停止接单收货" },
-      { id: "oz-4", platform: "Ozon", name: "Ozon 达吉斯坦/马哈奇卡拉仓", type: "ozon-damaged", lat: 42.9849, lng: 47.5046, area: "区域分拨仓", date: "2026-08-24", details: "夜间空袭波及起火 / 中转受阻" },
-      { id: "oz-5", platform: "Ozon", name: "Ozon 阿德盖亚/埃涅姆仓", type: "ozon-damaged", lat: 44.8911, lng: 39.1833, area: "南部骨干仓", date: "2026-08-24", details: "空袭警报清场 / 临时停运" },
-      { id: "oz-6", platform: "Ozon", name: "Ozon 斯塔夫罗波尔/内温诺梅斯克仓", type: "ozon-damaged", lat: 44.6403, lng: 41.9367, area: "高加索中转仓", date: "2026-08-24", details: "遭袭威胁 / 局部受阻延误" },
-      { id: "oz-7", platform: "Ozon", name: "Ozon 圣彼得堡/科尔皮诺临近区", type: "ozon-damaged", lat: 59.7489, lng: 30.5844, area: "西北物流带", date: "2026-08-23", details: "距主库350米处发生特大火灾" },
-      { id: "wb-1", platform: "Wildberries", name: "WB 埃莱克特罗斯塔尔仓 (莫斯科州)", type: "wb-damaged", lat: 55.7936, lng: 38.4414, area: "230,000 m²", date: "2026-07-18", details: "完全焚毁停运" },
-      { id: "wb-2", platform: "Wildberries", name: "WB 波多利斯克/科列季诺北仓 (莫斯科州)", type: "wb-damaged", lat: 55.3725, lng: 37.5817, area: "200,000 m²", date: "2026-08-16", details: "严重损毁停运" },
-      { id: "wb-3", platform: "Wildberries", name: "WB 阿列克辛仓 (图拉州)", type: "wb-damaged", lat: 54.5083, lng: 37.0786, area: "194,500 m²", date: "2026-08-05", details: "完全损毁坍塌" },
-      { id: "wb-4", platform: "Wildberries", name: "WB 秋舍沃仓 (梁赞州)", type: "wb-damaged", lat: 54.7167, lng: 39.6333, area: "173,000 m²", date: "2026-07-29", details: "严重受损停发" },
-      { id: "wb-5", platform: "Wildberries", name: "WB 沃尔申斯科耶仓 (弗拉基米尔州)", type: "wb-damaged", lat: 56.0333, lng: 40.0167, area: "171,900 m²", date: "2026-08-03", details: "受损停运" },
-      { id: "wb-6", platform: "Wildberries", name: "WB 舒沙雷仓 (圣彼得堡)", type: "wb-damaged", lat: 59.8117, lng: 30.3853, area: "170,000 m²", date: "2026-07-24", details: "过火受损停运" },
-      { id: "wb-7", platform: "Wildberries", name: "WB 叶卡捷琳堡仓 (斯维尔德洛夫斯克)", type: "wb-damaged", lat: 56.8389, lng: 60.6056, area: "158,000 m²", date: "2026-08-07", details: "两次遭袭受损" },
-      { id: "wb-8", platform: "Wildberries", name: "WB 红博尔仓 (列宁格勒州)", type: "wb-damaged", lat: 59.6833, lng: 30.8667, area: "154,000 m²", date: "2026-08-04", details: "受损暂停发货" },
-      { id: "wb-9", platform: "Wildberries", name: "WB 新乌斯曼仓 (沃罗涅日州)", type: "wb-damaged", lat: 51.6433, lng: 39.4103, area: "152,900 m²", date: "2026-08-11", details: "约46%面积坍塌焚毁" },
-      { id: "wb-10", platform: "Wildberries", name: "WB 克拉斯诺达尔仓", type: "wb-damaged", lat: 45.0355, lng: 38.9753, area: "150,000 m²", date: "2026-07-22", details: "完全损毁" },
-      { id: "wb-11", platform: "Wildberries", name: "WB 泽列诺多利斯克仓 (鞑靼斯坦)", type: "wb-damaged", lat: 55.8500, lng: 48.5500, area: "130,000 m²", date: "2026-08-05", details: "受损关闭" },
-      { id: "wb-12", platform: "Wildberries", name: "WB 内温诺梅斯克仓 (斯塔夫罗波尔)", type: "wb-damaged", lat: 44.6403, lng: 41.9367, area: "120,000 m²", date: "2026-07-22", details: "局部受损停运" },
-      { id: "wb-13", platform: "Wildberries", name: "WB 科托夫斯克仓 (坦波夫州)", type: "wb-damaged", lat: 52.5900, lng: 41.5000, area: "100,000 m²", date: "2026-07-18", details: "部分受损" },
-      { id: "wb-14", platform: "Wildberries", name: "WB 普里奥夫拉日诺耶仓 (奔萨州)", type: "wb-damaged", lat: 53.2000, lng: 45.0000, area: "90,000 m²", date: "2026-07-30", details: "受损发货中断" },
-      { id: "wb-15", platform: "Wildberries", name: "WB 新谢梅伊基诺仓 (萨马拉州)", type: "wb-damaged", lat: 53.3667, lng: 50.3500, area: "85,000 m²", date: "2026-08-02", details: "完全焚毁" },
-      { id: "wb-16", platform: "Wildberries", name: "WB 萨拉普尔仓 (乌德穆尔特)", type: "wb-damaged", lat: 56.4667, lng: 53.8000, area: "75,000 m²", date: "2026-07-30", details: "完全焚毁" },
-      { id: "wb-17", platform: "Wildberries", name: "WB 伏尔加格勒仓", type: "wb-damaged", lat: 48.7080, lng: 44.5133, area: "44,000 m²", date: "2026-07-31", details: "完全损毁" }
-    ];
+  // 2. 初始化地图
+  const map = L.map('map', { zoomControl: false }).setView([55.7558, 45.0], 5);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    const map = L.map('map', { center: [54.5, 46.0], zoom: 5, zoomControl: false });
-    L.control.zoom({ position: 'bottomright' }).addTo(map);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(map);
+  // 加载轻量级高质感底图
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; CartoDB &copy; OpenStreetMap',
+    maxZoom: 18
+  }).addTo(map);
 
-    let markers = [];
+  // 3. 标记点图标生成器
+  function createCustomIcon(color) {
+    const svgIcon = `
+      <svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 0C7.16344 0 0 7.16344 0 16C0 26.5 16 42 16 42C16 42 32 26.5 32 16C32 7.16344 24.8366 0 16 0Z" fill="${color}"/>
+        <circle cx="16" cy="15" r="6" fill="white"/>
+      </svg>`;
+    return L.divIcon({
+      html: svgIcon,
+      className: 'map-pin',
+      iconSize: [32, 42],
+      iconAnchor: [16, 42],
+      popupAnchor: [0, -38]
+    });
+  }
 
-    function getPinIcon(type) {
-      let color = (type === 'ozon-damaged' || type.includes('ozon')) ? '#d93025' : '#9333ea';
-      return L.divIcon({
-        className: 'custom-pin',
-        html: `
-          <div class="gmap-pin-wrap">
-            <svg class="gmap-pin-svg" viewBox="0 0 28 38" fill="none">
-              <path d="M14 0C6.268 0 0 6.268 0 14C0 24.5 14 38 14 38C14 38 28 24.5 28 14C28 6.268 21.732 0 14 0Z" fill="${color}"/>
-              <circle cx="14" cy="14" r="5.5" fill="#FFFFFF"/>
-            </svg>
-          </div>`,
-        iconSize: [28, 38],
-        iconAnchor: [14, 38],
-        popupAnchor: [0, -36]
+  const icons = {
+    ozon_attack: createCustomIcon('#e11d48'),
+    wb_attack: createCustomIcon('#8b5cf6'),
+    ozon_normal: createCustomIcon('#2563eb')
+  };
+
+  let markers = {};
+  let currentFilter = 'all';
+
+  // 4. 渲染统计数据
+  function updateStats() {
+    const ozonAttack = warehouseData.filter(d => d.type === 'ozon_attack').length;
+    const wbAttack = warehouseData.filter(d => d.type === 'wb_attack').length;
+    const ozonNormal = warehouseData.filter(d => d.type === 'ozon_normal').length;
+
+    document.getElementById('stat-ozon-attack').innerText = ozonAttack;
+    document.getElementById('stat-wb-attack').innerText = wbAttack;
+    document.getElementById('stat-ozon-normal').innerText = ozonNormal;
+  }
+
+  // 5. 生成 Popup HTML
+  function getPopupContent(item) {
+    return `
+      <div class="popup-title">[${item.type === 'ozon_normal' ? '正常' : '遭袭 ' + item.date.slice(5)}] ${item.name}</div>
+      <div class="popup-row"><strong>平台:</strong> ${item.platform}</div>
+      <div class="popup-row"><strong>状态:</strong> <span style="color:${item.type === 'ozon_normal' ? '#2563eb':'#e11d48'};font-weight:600;">${item.status}</span></div>
+      <div class="popup-row"><strong>规模:</strong> ${item.scale}</div>
+      <div class="popup-row"><strong>日期:</strong> ${item.date}</div>
+      <div class="popup-row" style="margin-top:6px;">${item.desc}</div>
+      <div class="popup-coord">📍 ${item.coords[0].toFixed(4)}, ${item.coords[1].toFixed(4)}</div>
+    `;
+  }
+
+  // 6. 渲染列表与地图标记
+  function renderView(items) {
+    const listContainer = document.getElementById('warehouseList');
+    listContainer.innerHTML = '';
+
+    // 清空现有标记
+    Object.values(markers).forEach(m => map.removeLayer(m));
+    markers = {};
+
+    items.forEach(item => {
+      // 标签样式映射
+      let badgeClass = 'badge-ozon-attack';
+      let tagLabel = 'Ozon遭袭';
+      if (item.type === 'wb_attack') { badgeClass = 'badge-wb-attack'; tagLabel = 'WB遭袭'; }
+      if (item.type === 'ozon_normal') { badgeClass = 'badge-ozon-normal'; tagLabel = 'Ozon正常'; }
+
+      // 创建 DOM 列表卡片
+      const card = document.createElement('div');
+      card.className = 'warehouse-card';
+      card.id = `card-${item.id}`;
+      card.innerHTML = `
+        <div class="card-head">
+          <div class="card-title">[${item.type === 'ozon_normal' ? '正常' : '遭袭 ' + item.date.slice(5)}] ${item.name}</div>
+          <span class="badge-pill ${badgeClass}">${tagLabel}</span>
+        </div>
+        <div class="card-status">${item.status} (${item.date})</div>
+        <div class="card-desc">${item.desc}</div>
+      `;
+
+      card.onclick = () => {
+        focusWarehouse(item);
+      };
+      listContainer.appendChild(card);
+
+      // 创建地图 Marker
+      const marker = L.marker(item.coords, { icon: icons[item.type] })
+        .bindPopup(getPopupContent(item), { className: 'custom-popup', maxWidth: 300 })
+        .addTo(map);
+
+      marker.on('click', () => {
+        highlightCard(item.id);
       });
+
+      markers[item.id] = marker;
+    });
+  }
+
+  // 联动交互：点击卡片定位地图
+  function focusWarehouse(item) {
+    map.flyTo(item.coords, 8, { duration: 1 });
+    const marker = markers[item.id];
+    if (marker) {
+      marker.openPopup();
     }
+    highlightCard(item.id);
+  }
 
-    function renderData(dataList) {
-      markers.forEach(m => map.removeLayer(m));
-      markers = [];
+  function highlightCard(id) {
+    document.querySelectorAll('.warehouse-card').forEach(c => c.classList.remove('active-card'));
+    const targetCard = document.getElementById(`card-${id}`);
+    if (targetCard) {
+      targetCard.classList.add('active-card');
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
 
-      const listEl = document.getElementById('warehouse-list');
-      listEl.innerHTML = '';
+  // 7. 筛选与搜索机制
+  function filterData() {
+    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+    
+    return warehouseData.filter(item => {
+      // 类型过滤
+      let matchesType = true;
+      if (currentFilter === 'ozon_attack') matchesType = item.type === 'ozon_attack';
+      else if (currentFilter === 'wb_attack') matchesType = item.type === 'wb_attack';
+      else if (currentFilter === 'ozon_normal') matchesType = item.type === 'ozon_normal';
+      else if (currentFilter === 'all_attack') matchesType = item.type.includes('attack');
 
-      let ozCount = 0, wbCount = 0;
-      let coords = [];
-
-      dataList.forEach(item => {
-        const isOz = item.type === 'ozon-damaged' || item.platform === 'Ozon';
-        if (isOz) ozCount++; else wbCount++;
-
-        const marker = L.marker([item.lat, item.lng], { icon: getPinIcon(item.type) });
-        marker.bindPopup(`
-          <div style="font-size:12px; line-height:1.4;">
-            <b style="font-size:13px; color:#202124;">${item.name}</b><br>
-            <b>平台:</b> ${item.platform} | <b>规模:</b> ${item.area}<br>
-            <b>时间:</b> ${item.date}<br>
-            <b>状态/详情:</b> ${item.details || item.status}<br>
-            ${item.source_url ? `<a href="${item.source_url}" target="_blank" style="color:#1a73e8;">查看新闻报道</a>` : ''}
-          </div>
-        `);
-        marker.addTo(map);
-        markers.push(marker);
-        coords.push([item.lat, item.lng]);
-
-        const div = document.createElement('div');
-        div.className = 'list-item';
-        div.innerHTML = `
-          <div class="item-header"><span>${item.name}</span></div>
-          <div class="item-desc">${item.details || item.status} (${item.date})</div>
-        `;
-        div.addEventListener('click', () => {
-          map.flyTo([item.lat, item.lng], 8, { duration: 1.2 });
-          marker.openPopup();
-        });
-        listEl.appendChild(div);
-      });
-
-      document.getElementById('cntOz').innerText = ozCount;
-      document.getElementById('cntWb').innerText = wbCount;
-
-      if (coords.length > 0 && !window.hasFit) {
-        map.fitBounds(coords, { padding: [40, 40] });
-        window.hasFit = true;
+      // 关键词搜索
+      let matchesKeyword = true;
+      if (keyword) {
+        matchesKeyword = item.name.toLowerCase().includes(keyword) ||
+                         item.desc.toLowerCase().includes(keyword) ||
+                         item.scale.toLowerCase().includes(keyword) ||
+                         item.status.toLowerCase().includes(keyword);
       }
-    }
 
-    // 1. 打开页面时，立刻呈现底库数据（绝不显示0）
-    renderData(BASE_DATA);
+      return matchesType && matchesKeyword;
+    });
+  }
 
-    // 2. 联网拉取最新增量数据
-    async function loadOnlineUpdates() {
-      const statusEl = document.getElementById('syncStatus');
-      try {
-        const res = await fetch('./data.json?_t=' + Date.now());
-        if (res.ok) {
-          const onlineData = await res.json();
-          if (Array.isArray(onlineData) && onlineData.length > 0) {
-            renderData(onlineData);
-            statusEl.innerText = "已同步 " + new Date().toLocaleTimeString();
-            return;
-          }
-        }
-      } catch (e) {
-        console.log("联网检查正常轮询中...");
-      }
-      statusEl.innerText = "已就绪 " + new Date().toLocaleTimeString();
-    }
+  function setFilter(filterType) {
+    currentFilter = filterType;
+    document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+    
+    // 更新按钮激活状态
+    event?.target?.classList?.add('active');
 
-    loadOnlineUpdates();
-    setInterval(loadOnlineUpdates, 60000);
-  </script>
+    const filtered = filterData();
+    renderView(filtered);
+  }
+
+  function handleSearch() {
+    const filtered = filterData();
+    renderView(filtered);
+  }
+
+  // 初始化加载
+  updateStats();
+  renderView(warehouseData);
+</script>
 </body>
 </html>
