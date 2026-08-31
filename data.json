@@ -440,5 +440,61 @@
     "details": "Крупный склад Ozon в Самарской области подвергся атаке беспилотников: его работу приоста­но­вили на неопреде­ленный срок - Т—Ж",
     "news_title": "Крупный склад Ozon в Самарской области подвергся атаке беспилотников: его работу приоста­но­вили на неопреде­ленный срок - Т—Ж",
     "source_url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE8xUFk0V1NibG9MOW5URkg4MWZWLTdTSDJIY0h1MUhuWVBqUXR1ZW9wSWF5TlpoTFFuakFRMmNZNkxwUlJ3cDljUTFNbDItbm83?oc=5"
+  },
+  {
+    "id": "auto-1788210080-0",
+    "platform": "Ozon",
+    "name": "Ozon 罗斯托夫仓",
+    "type": "ozon-damaged",
+    "lat": 47.2333,
+    "lng": 39.7,
+    "area": "未知",
+    "date": "Sat, 29 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Дроны атаковали склады Ozon и DNS под Ростовом. Пожар вспыхнул в районе судостроительного завода - theins.ru",
+    "news_title": "Дроны атаковали склады Ozon и DNS под Ростовом. Пожар вспыхнул в районе судостроительного завода - theins.ru",
+    "source_url": "https://news.google.com/rss/articles/CBMiQ0FVX3lxTE1wREM3aTNNQVlnX3NydjFBSmRHZmRBeTVCUzRqbmFHQXJBbEVsalhSb2JUNzY0MGRvcmxVVnFad3F4ZWs?oc=5"
+  },
+  {
+    "id": "auto-1788210080-1",
+    "platform": "Ozon",
+    "name": "Ozon 萨马拉仓",
+    "type": "ozon-damaged",
+    "lat": 52.9833,
+    "lng": 49.7167,
+    "area": "135,000 m²",
+    "date": "Sat, 22 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Склад Ozon в Самарской области подвергся атаке беспилотника - bfm.ru",
+    "news_title": "Склад Ozon в Самарской области подвергся атаке беспилотника - bfm.ru",
+    "source_url": "https://news.google.com/rss/articles/CBMiREFVX3lxTFA3b0puUmlFNUJWT1NYLXliTDNfUUpJdUJsSllMdTMyenQwOS1PYk0welZQSzhXMmxBdU1iNGhTdjNwWE5L0gFKQVVfeXFMTmpqRzNWdW5xNG9DdzNTdHVaQjh3eFc3Zk4zaWdUVE1YQWhhMy1qRWxJOXNvMjh2WUFmN19aYWlBRGtyblAzZkRVRXc?oc=5"
+  },
+  {
+    "id": "auto-1788210080-2",
+    "platform": "Ozon",
+    "name": "Ozon 奥伦堡仓",
+    "type": "ozon-damaged",
+    "lat": 51.7667,
+    "lng": 55.1,
+    "area": "40,000 m²",
+    "date": "Sun, 23 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Ozon остановил работу склада в Оренбурге после атаки беспилотников - bfm.ru",
+    "news_title": "Ozon остановил работу склада в Оренбурге после атаки беспилотников - bfm.ru",
+    "source_url": "https://news.google.com/rss/articles/CBMiREFVX3lxTE1uNEJDZDRTVE02MHVXRVJHeG4wZV9QSUxKUThYeHdPN1VRM3ZDSGJfclM2OEh2VVVnUnh4UjdhSV96R1FJ0gFKQVVfeXFMT05fZ0NraHFTaEktLVZRSFlwNFpTZXJNTnJwQ1Q4Ny1HalR5dm1IbXFkWlRzc2NVeUxac0h5WFBhS1BSN3c4bzQwTGc?oc=5"
+  },
+  {
+    "id": "auto-1788210080-3",
+    "platform": "Wildberries",
+    "name": "Ozon 萨马拉仓",
+    "type": "wb-damaged",
+    "lat": 52.9833,
+    "lng": 49.7167,
+    "area": "135,000 m²",
+    "date": "Sat, 01 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Еще один склад Wildberries атакован в Самарской области. Под Саратовом в результате удара украинских беспилотников погибли два человека - Meduza",
+    "news_title": "Еще один склад Wildberries атакован в Самарской области. Под Саратовом в результате удара украинских беспилотников погибли два человека - Meduza",
+    "source_url": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxQdTY5NHZqaGJHWW5JRmZRemhIeU9LaDlhczlwQzh3OXExLXN4QmdPWlk3ZkNWRHNvUFZ6MXFxVUdKVjM2dkJlVV9hQ0F2cHhnYXkxSWxwbmpqUkhTc01HTXF3ZDR3QXFaclNaVDVJeXdUWnVoNkZuUHl3LUVlTTVOT2xHbFFpQUhMVWZTb3ZhVGNCU1ZLdlhBU3dyd2N4TFJVS1o3TzhnMFczUFFOYzVtOFFJb0NzUTFvTy1FT0o1YjR3N01WRGdwTVdGU0lrcGw0RFljNmNQM3ZNbF9VRnBnZ0tIUGFTa2FVY2VWRVlhY1hvaWFFaGIwcVVld3FMUGvSAYQCQVVfeXFMT0Q0SGZjajN0ZDh6bmw3eHdsNDZWdThxck81dXBGMVFncXVjV3cydFM3Z0hOajBoa2pWVzdiT2FBbU9Bd3Jubmhsdy1nb2RIb2Jrc2p3U2ZGU1V3YXVmWFRsV1dhY0NMdlBTMEpiUEEyV3lzWVpTZEYxMHZhZFVIQ0JjV01Fd3RUTV9aR2tQWDlkYlQ3SW91RUVKTUxrUS1CUmZqMEZZZ3ZEdUpqS1o4bUxwSGI2RkxodXpoeDlrZno3ejRzcTZyWG0wLWNuOWxjckhLWXNvb09CNndselFpU1AxLW1hYUNpNmZNQ29vSm5QU2RUTVNQTUZQMnllOTBaRnZ2QUs?oc=5"
   }
 ]
