@@ -552,5 +552,61 @@
     "details": "Дроны атаковали склады Ozon в Невинномысске и Махачкале, есть пострадавшие - rtvi.com",
     "news_title": "Дроны атаковали склады Ozon в Невинномысске и Махачкале, есть пострадавшие - rtvi.com",
     "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNak51bzZocVlXcktXUU5UT3FUamljRklpd0FMd3JncmVMa0lUSUxCc1ZTYUU0Smh3MUpvSThyQnl6WDZwTkhraXhMV2NRX1F1MlhjMTR1eHlta19SUk5aVnJWTlk0VmZZNkpnMklKQ2tTWU9mbnFPWlZ3NTVWUXd3anl2RkItQ0hGOXVSR3p6dDI1Y0pmclItR2JuWHY3dw?oc=5"
+  },
+  {
+    "id": "auto-1788292166-0",
+    "platform": "Ozon",
+    "name": "Ozon 奥伦堡仓",
+    "type": "ozon-damaged",
+    "lat": 51.7667,
+    "lng": 55.1,
+    "area": "40,000 m²",
+    "date": "Sat, 22 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Украинские дроны атаковали второй склад Ozon — в Оренбурге - Meduza",
+    "news_title": "Украинские дроны атаковали второй склад Ozon — в Оренбурге - Meduza",
+    "source_url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPTmgxb1ZwSDBFb2xneGdRQUxYLXpiaEF1WGhMVXl3bFBvbndScUxSV0dkLTdRdVVlOW0yQ2ZnREZzeWtkcGFtV3R6Tk9EN3FSM0x4TTNHY3FSZlg1Z1FjVHRTLVRsNDZfaUtVbWpDdHVGS3JwMzRBcnNtRks5R2QzV2t2cFF3Yld2U001NnF4NEl1Mm1p?oc=5"
+  },
+  {
+    "id": "auto-1788292166-1",
+    "platform": "Ozon",
+    "name": "Ozon 奥伦堡仓",
+    "type": "ozon-damaged",
+    "lat": 51.7667,
+    "lng": 55.1,
+    "area": "40,000 m²",
+    "date": "Sun, 23 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "На складе Ozon в Оренбурге начался пожар после атаки БПЛА - dw.com",
+    "news_title": "На складе Ozon в Оренбурге начался пожар после атаки БПЛА - dw.com",
+    "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNVXNGZDJJdDkwMzNuOEVZZzJaRl9wclRCUWNyaHAzRTRrd01EOGY0RzNISGE4Yi05RHdmLWlhT01iZFJLdjNTalFrX3RvdHptekRaNEVNZjdyUmhuQVJPT0gwZ19veWJteWlSNVZxTTIyXzNtMXlJeXQ0WEZSNmNlRWxzUFFWUmJYU09paTdnYlFTTy1Cd05XOTNwcFNsODVqNUpZ0gGjAUFVX3lxTFBPQkwzdlJzemlWaU5LMnFrY3h6TGVMSEhYUldoR1AxOThadlVxNjBnUGE1WnVJUGZ3UVRyN0lVT01henF3SDJKQTBjT0FGSHFiNUVMM05YTTdHOGJaNjhFSzRKTHNWOUpwMWNod0hXaW9ad1RZTDZsNkxoOHo4eEhFWEk3ZWhFVWRBaXFOSzJ2ZENiUXVEcGtIc1pXMFI4WnZRVHM?oc=5"
+  },
+  {
+    "id": "auto-1788292166-2",
+    "platform": "Ozon",
+    "name": "Ozon 奥伦堡仓",
+    "type": "ozon-damaged",
+    "lat": 51.7667,
+    "lng": 55.1,
+    "area": "40,000 m²",
+    "date": "Sun, 23 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Второй склад Ozon за два дня пострадал при атаке — на этот раз в Оренбурге. В Петербурге горит склад рядом с Ozon - theins.ru",
+    "news_title": "Второй склад Ozon за два дня пострадал при атаке — на этот раз в Оренбурге. В Петербурге горит склад рядом с Ozon - theins.ru",
+    "source_url": "https://news.google.com/rss/articles/CBMiQ0FVX3lxTE1JV3ZETFpvVW1Hd2t2V2VkNWZlVjV0a0dHcU5WMUZVbE9tcEFYM0hwTnNpZF9LaDRiQWdZXzlsRTczb0E?oc=5"
+  },
+  {
+    "id": "auto-1788292166-3",
+    "platform": "Ozon",
+    "name": "Ozon 奥伦堡仓",
+    "type": "ozon-damaged",
+    "lat": 51.7667,
+    "lng": 55.1,
+    "area": "40,000 m²",
+    "date": "Sun, 23 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Атака БПЛА на склад Ozon в Оренбурге и пожар в Шушарах: главное о ЧП - inkazan.ru",
+    "news_title": "Атака БПЛА на склад Ozon в Оренбурге и пожар в Шушарах: главное о ЧП - inkazan.ru",
+    "source_url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQQWU2YzNwWTJ6eXBQbDMtbWJoVlFWdW5oVXBXR1NQNkwwVnhGc2x0YXVKWTBmdTQ4dFVNU0NlUkdjd1ZSSm03cHcxX2ZqS0t0ajEwcmRtWVlfRUVPbExNdGZrUWRaNE5QR2R4TF9zRWR0dXdQNHhGRmJzTmppOHRfWnJjYVNqNXY4VW5GNzZpSkZBdHotSUxQY1hhT1ZEZ1hKeGRHUXg3QmVQNmJsVkhsLUducWc?oc=5"
   }
 ]
