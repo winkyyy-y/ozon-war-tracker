@@ -636,5 +636,61 @@
     "details": "Украинские беспилотники вновь атаковали склад Wildberries под Воронежем, есть погибший и пострадавшие. В Оренбургской области горит НПЗ - meduza.io",
     "news_title": "Украинские беспилотники вновь атаковали склад Wildberries под Воронежем, есть погибший и пострадавшие. В Оренбургской области горит НПЗ - meduza.io",
     "source_url": "https://news.google.com/rss/articles/CBMi_AFBVV95cUxOOUVrS0J2RXdTekRVVXpqTGE4WU81ZEIyZTM5VDdqWExaUnVKc25HVTFHNDVkaElsdk9mblJrN0g4UDlUOUxJOTdkWnkxcWtlUDBybXdLVHhraDU5OXhxcEJCRnZfRk1EeFFhNXB5RTRDcklYWThtWU43SDluZHp3MC1tajZ6cG1XeHlpSTdGS2hjSmZuNlNpcjZkSnRsRVFqR2tldmxfUWNmM0xqWEVBc3c3NUtGaG9YTzctR3FzZGhRdkdiX3pXM1o1MTlmU2RvY0E1UzlSS2I2cjJxeF9Zd3lWb0xnZzg3UmZaZXF2akstZERLLUtaWEdqcjTSAYICQVVfeXFMTnJYOVRQVTNEX0xOVnhWWWJfakYzamFJX2JEakpwbnNsazNJcW5FWDNiTGtHRGo5NHFLNnRuZEo1SzdhNS14Zmt4TjhaV041a1M2X3NLdnJ5Q0ZLWUwzX3dmSVZoYmJ4S2J1azZsU3hvWE9zd1NiaXhaSy1hdGVJdVozcWZ6UG9CQk9XUTF5U1JLV0RVUm5Pcm1hZ1lfYnhJcG5vbFh0RUp5OTlhZ2Z6WGREQmozYVZVTVc4Y3lEMWlqTG9MRTZVamVlRVZoQXRFdmdMREdaUnp4UHBhdWJfSC0waTBkZnNCcU9zeERXTC1jTDc1c01ubGxLd2dTcktMXzNB?oc=5"
+  },
+  {
+    "id": "auto-1788327616-0",
+    "platform": "Ozon",
+    "name": "Ozon 奥伦堡仓",
+    "type": "ozon-damaged",
+    "lat": 51.7667,
+    "lng": 55.1,
+    "area": "40,000 m²",
+    "date": "Sun, 23 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "На складе Ozon в Оренбурге начался пожар после атаки БПЛА - DW.com",
+    "news_title": "На складе Ozon в Оренбурге начался пожар после атаки БПЛА - DW.com",
+    "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNVXNGZDJJdDkwMzNuOEVZZzJaRl9wclRCUWNyaHAzRTRrd01EOGY0RzNISGE4Yi05RHdmLWlhT01iZFJLdjNTalFrX3RvdHptekRaNEVNZjdyUmhuQVJPT0gwZ19veWJteWlSNVZxTTIyXzNtMXlJeXQ0WEZSNmNlRWxzUFFWUmJYU09paTdnYlFTTy1Cd05XOTNwcFNsODVqNUpZ0gGjAUFVX3lxTFBPQkwzdlJzemlWaU5LMnFrY3h6TGVMSEhYUldoR1AxOThadlVxNjBnUGE1WnVJUGZ3UVRyN0lVT01henF3SDJKQTBjT0FGSHFiNUVMM05YTTdHOGJaNjhFSzRKTHNWOUpwMWNod0hXaW9ad1RZTDZsNkxoOHo4eEhFWEk3ZWhFVWRBaXFOSzJ2ZENiUXVEcGtIc1pXMFI4WnZRVHM?oc=5"
+  },
+  {
+    "id": "auto-1788327616-1",
+    "platform": "Ozon",
+    "name": "Ozon 萨马拉仓",
+    "type": "ozon-damaged",
+    "lat": 52.9833,
+    "lng": 49.7167,
+    "area": "135,000 m²",
+    "date": "Sat, 22 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "В Ozon сообщили о пожаре на атакованном складе в Самарской области - Интерфакс",
+    "news_title": "В Ozon сообщили о пожаре на атакованном складе в Самарской области - Интерфакс",
+    "source_url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBMYjF2Q0NFS3hrdEpPNjFid2syM3JZY2t2ajZXVmo1OE4yMDNkYTNYZVlpcWwtaEp6am0xN3hsNDh6OWJNNGduZU9EMWlweUXSAUtBVV95cUxPMkNQSl9QcWh4ZjhlUW1QdU96ZmdWalJScGlqYXNpNWVrcUdDZWtIcFA5VWZfRy1ZLUtzZmg4NDE1dWJXSklPT3VVY1U?oc=5"
+  },
+  {
+    "id": "auto-1788327616-2",
+    "platform": "Ozon",
+    "name": "Ozon 萨马拉仓",
+    "type": "ozon-damaged",
+    "lat": 52.9833,
+    "lng": 49.7167,
+    "area": "135,000 m²",
+    "date": "Sat, 22 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "На складе Ozon в Самарской области начался пожар после атаки БПЛА - expert.ru",
+    "news_title": "На складе Ozon в Самарской области начался пожар после атаки БПЛА - expert.ru",
+    "source_url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPbElLNmtoVlVsUUJVWUw2UlJpR1d2X1R0SjFfYUUxQnpxcVNja21kRTR2Ql92UGQ5QjRBLWpJTWxHWVhvRHIwOXUyRG1sYUpZLTJjcWFsUDNSaGF1VmlGSlRWZk1EVkdFVGZiY3NNT29KVkFZN2JXMlAxNzhWNDF5VnVkYzJCejYtTWJEenBWOW5qYjJnZFE?oc=5"
+  },
+  {
+    "id": "auto-1788327616-3",
+    "platform": "Wildberries",
+    "name": "Ozon 奥伦堡仓",
+    "type": "wb-damaged",
+    "lat": 51.7667,
+    "lng": 55.1,
+    "area": "40,000 m²",
+    "date": "Mon, 10 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Украинские беспилотники вновь атаковали склад Wildberries под Воронежем, есть погибший и пострадавшие. В Оренбургской области горит НПЗ - Meduza",
+    "news_title": "Украинские беспилотники вновь атаковали склад Wildberries под Воронежем, есть погибший и пострадавшие. В Оренбургской области горит НПЗ - Meduza",
+    "source_url": "https://news.google.com/rss/articles/CBMi_AFBVV95cUxOOUVrS0J2RXdTekRVVXpqTGE4WU81ZEIyZTM5VDdqWExaUnVKc25HVTFHNDVkaElsdk9mblJrN0g4UDlUOUxJOTdkWnkxcWtlUDBybXdLVHhraDU5OXhxcEJCRnZfRk1EeFFhNXB5RTRDcklYWThtWU43SDluZHp3MC1tajZ6cG1XeHlpSTdGS2hjSmZuNlNpcjZkSnRsRVFqR2tldmxfUWNmM0xqWEVBc3c3NUtGaG9YTzctR3FzZGhRdkdiX3pXM1o1MTlmU2RvY0E1UzlSS2I2cjJxeF9Zd3lWb0xnZzg3UmZaZXF2akstZERLLUtaWEdqcjTSAYICQVVfeXFMTnJYOVRQVTNEX0xOVnhWWWJfakYzamFJX2JEakpwbnNsazNJcW5FWDNiTGtHRGo5NHFLNnRuZEo1SzdhNS14Zmt4TjhaV041a1M2X3NLdnJ5Q0ZLWUwzX3dmSVZoYmJ4S2J1azZsU3hvWE9zd1NiaXhaSy1hdGVJdVozcWZ6UG9CQk9XUTF5U1JLV0RVUm5Pcm1hZ1lfYnhJcG5vbFh0RUp5OTlhZ2Z6WGREQmozYVZVTVc4Y3lEMWlqTG9MRTZVamVlRVZoQXRFdmdMREdaUnp4UHBhdWJfSC0waTBkZnNCcU9zeERXTC1jTDc1c01ubGxLd2dTcktMXzNB?oc=5"
   }
 ]
