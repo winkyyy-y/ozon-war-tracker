@@ -902,5 +902,33 @@
     "details": "Склады Ozon в пригороде Краснодара, Махачкале и Адыгейске попали под атаку дронов - forbes.ru",
     "news_title": "Склады Ozon в пригороде Краснодара, Махачкале и Адыгейске попали под атаку дронов - forbes.ru",
     "source_url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxORUlMVVVqc2dsd1IxeVloYnpFT2ZYTHRpV3Y4bVkycEZfMEJSVkdlQmsySHdfSUVCY2NfRDgtLTRpd1otSTlTMVNqMS1lOWVkQmRRNXhORmhkTlF2M09OeHlkWUREWGJua1lONUo4VUdhYjRmay1iZVlvYW01UDk4LW52WG95SWhLeGp2MkJyN0ZwWmV0ZmNiS25RYlkyTFhxNEVkeFh6TjFEeFJyQWF3?oc=5"
+  },
+  {
+    "id": "auto-1792477700-0",
+    "platform": "Ozon",
+    "name": "Ozon 克拉斯诺达尔仓",
+    "type": "ozon-damaged",
+    "lat": 45.0355,
+    "lng": 38.9753,
+    "area": "150,000 m²",
+    "date": "Sun, 23 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Атаки БПЛА: Жертвы в Краснодаре, пожары на складах Ozon и ответные удары - Национальная Служба Новостей",
+    "news_title": "Атаки БПЛА: Жертвы в Краснодаре, пожары на складах Ozon и ответные удары - Национальная Служба Новостей",
+    "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNSTI1NTFCTFBIWmZwTnVGbWowMVg2b3dlcjZyUUpiTWk4Y2VCWjFycmstbXA2amVQdERGRG44Ul9CMFVZVlZrWjVjdk1qdGJudnlkc0ZaRlMtSWZQS0gyLWU3WFpqVF9rSm05LWJSLTBpT1lmdFhKVkR0VkNrS1hvYXc5UklvdVVvN2k2M2xlTTJ0VFNKV1FJdS1zbE5ESXpvMjVwU3o2OXZ4RTJnQWUyRWFPck1nQdIBuwFBVV95cUxQWFBmX0NodEd1SnVZSWZsMTF4MzFSaDZrZjhfQmtMRHk2cGNtOE9sUnM3T1RURExFeERfNm5FOG5IMkZycVAxbUQ1UmdoR2o0NjdKb2hIZnJrdEpsYkRySWRzbmRqQUFIbE9CVUtqMklFWldDcVU5aEg4NVpLQkxTc3VqOFhmLU90aDJnNXdZaXFSOW9yVkx5Vnk1cVFucnFKVElocnZsb0JWTS1fYm9QdHdJcGNoY3ZhaGVV?oc=5"
+  },
+  {
+    "id": "auto-1792477700-1",
+    "platform": "Wildberries",
+    "name": "Ozon 萨马拉仓",
+    "type": "wb-damaged",
+    "lat": 52.9833,
+    "lng": 49.7167,
+    "area": "135,000 m²",
+    "date": "Tue, 04 Aug 2026",
+    "status": "监测到异常(火灾/袭击)",
+    "details": "Склад Wildberries под Самарой уничтожен после атаки дронов - Радио Свобода",
+    "news_title": "Склад Wildberries под Самарой уничтожен после атаки дронов - Радио Свобода",
+    "source_url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxPeFpvVVJoSnl1bHhUU3k5S2dQaXlvNVc0TlRzNkJFbFpQNjRNOVRRS3kwYkhIOUhzZktLYTB2RUdrZnhtSExYOU5GaDkzNHdfSm5YRUUtbmVCU0RnVzJLMDJBNy03eWxFaXA0eXpwWndhTk9wdWVTR1ZCUFBvZHhyZG50cjJyOUF6ekU0QjdWbFNWY3FhUWNlMGt0U2JPMFVGS1HSAaQBQVVfeXFMUEY4elc1VlNna3EzM3JvQTFnYlBILUF1NDZJRnVDSjRlRGt1b1VWcEVYVDMwaHAxS1VJa1hmNzNwdWkxWDgyWHZ1d3FhTE80WkZYeFNYVk92empEQnVnRWhoZFFQVVBLdGEyOWtCT0Z3TlJSWHNCcjVJazRqTFlqcjJrMlp0N3ZBaEdGSlZTem9FZGNRMDRxa1hqRWhMSFNpaWtJYlo?oc=5"
   }
 ]
